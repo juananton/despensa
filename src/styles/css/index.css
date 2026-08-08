@@ -265,7 +265,11 @@ body {
 }
 
 /* GLOBAL */
-*:focus {
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
   outline-color: rgb(0, 154, 36);
 }
 
@@ -391,8 +395,10 @@ h6 {
   border-radius: 0.5rem;
   cursor: pointer;
 }
-.item .controls .dropdown li:hover {
-  background-color: rgb(220, 236, 220);
+@media (hover: hover) {
+  .item .controls .dropdown li:hover {
+    background-color: rgb(220, 236, 220);
+  }
 }
 
 .btn {
@@ -416,25 +422,35 @@ h6 {
   background-color: rgb(0, 154, 36);
   color: #ffffff;
 }
-.btn.btn-primary:hover {
-  background-color: #00811e;
-  border-color: #00811e;
+@media (hover: hover) {
+  .btn.btn-primary:hover {
+    background-color: #00811e;
+    border-color: #00811e;
+  }
 }
 .btn.btn-secondary {
   border: 1px solid rgb(220, 236, 220);
   background-color: rgb(220, 236, 220);
   color: rgb(0, 154, 36);
 }
-.btn.btn-secondary:hover {
-  background-color: #cbe3cb;
-  border-color: #cbe3cb;
+@media (hover: hover) {
+  .btn.btn-secondary:hover {
+    background-color: #cbe3cb;
+    border-color: #cbe3cb;
+  }
 }
 .btn.btn-nobg {
   border: transparent;
   background-color: transparent;
   color: rgb(0, 154, 36);
 }
-.btn.btn-nobg:hover, .btn.btn-nobg:focus {
+@media (hover: hover) {
+  .btn.btn-nobg:hover {
+    background-color: rgb(220, 236, 220);
+    border-color: rgb(220, 236, 220);
+  }
+}
+.btn.btn-nobg:focus-visible, .btn.btn-nobg.active {
   background-color: rgb(220, 236, 220);
   border-color: rgb(220, 236, 220);
 }
@@ -540,6 +556,11 @@ label .errorText {
   right: 12px;
   top: 0.75rem;
   color: rgb(0, 154, 36);
+}
+@media (pointer: coarse) {
+  .select select:focus-visible {
+    outline: none;
+  }
 }
 
 .tag {

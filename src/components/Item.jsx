@@ -117,6 +117,7 @@ const Item = ({ item }) => {
 						onClick={handelClick}
 						variant='icon'
 						use='nobg'
+						className={dropdownOpened ? 'active' : ''}
 					>
 						<FiMoreVertical className='icon' />
 					</Button>

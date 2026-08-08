@@ -89,8 +89,10 @@
 				cursor: pointer;
 			}
 
-			li:hover {
-				background-color: $color-light-green;
+			@media (hover: hover) {
+				li:hover {
+					background-color: $color-light-green;
+				}
 			}
 		}
 	}

@@ -1,4 +1,13 @@
-*:focus {
+// :focus-visible, no :focus a secas: el navegador distingue si el foco viene
+// del teclado (Tab) o de un toque/clic. Con :focus el contorno se quedaba
+// marcado tras tocar un botón en el móvil, porque no hay ratón que se aleje
+// para retirarlo. Tab sigue mostrando el contorno, así que la accesibilidad
+// por teclado no se pierde.
+*:focus:not(:focus-visible) {
+	outline: none;
+}
+
+*:focus-visible {
 	outline-color: $color-green;
 }
 

@@ -27,4 +27,16 @@
 		top: 0.75rem;
 		color: $color-green;
 	}
+
+	// El picker nativo de <select> en Android es una superposición del sistema,
+	// fuera del DOM: si se cancela tocando fuera, no llega ni change ni blur a
+	// la página, así que no hay forma de "soltar" el foco desde JS en ese caso.
+	// En touch no hace falta contorno: el propio picker ya muestra que el campo
+	// está activo mientras está abierto. pointer:coarse detecta el dedo, no la
+	// interacción concreta, así que cubre también este caso sin evento.
+	@media (pointer: coarse) {
+		select:focus-visible {
+			outline: none;
+		}
+	}
 }

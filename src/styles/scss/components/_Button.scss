@@ -21,9 +21,15 @@
 		background-color: $color-green;
 		color: $color-white;
 
-		&:hover {
-			background-color: darken($color-green, 5%);
-			border-color: darken($color-green, 5%);
+		// (hover: hover) excluye pantallas táctiles: sin esto, tocar el botón en
+		// el móvil deja el :hover activo hasta que tocas otra cosa, porque los
+		// navegadores táctiles simulan el hover al tocar para no romper webs
+		// pensadas sólo para ratón.
+		@media (hover: hover) {
+			&:hover {
+				background-color: darken($color-green, 5%);
+				border-color: darken($color-green, 5%);
+			}
 		}
 	}
 
@@ -31,9 +37,12 @@
 		border: 1px solid $color-light-green;
 		background-color: $color-light-green;
 		color: $color-green;
-		&:hover {
-			background-color: darken($color-light-green, 5%);
-			border-color: darken($color-light-green, 5%);
+
+		@media (hover: hover) {
+			&:hover {
+				background-color: darken($color-light-green, 5%);
+				border-color: darken($color-light-green, 5%);
+			}
 		}
 	}
 
@@ -42,8 +51,18 @@
 		background-color: transparent;
 		color: $color-green;
 
-		&:hover,
-		&:focus {
+		@media (hover: hover) {
+			&:hover {
+				background-color: $color-light-green;
+				border-color: $color-light-green;
+			}
+		}
+
+		// .active refleja un estado propio de la app (el desplegable de acciones
+		// abierto), no un estado del navegador: a diferencia de :hover o
+		// :focus-visible, tiene que verse igual con ratón, teclado o dedo.
+		&:focus-visible,
+		&.active {
 			background-color: $color-light-green;
 			border-color: $color-light-green;
 		}
