@@ -2,7 +2,11 @@ import { useContext, useState } from 'react';
 import { CATEGORIES } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
 import { depletionFrom } from '../lib/items';
-import { validateName } from '../lib/validation';
+import {
+	validateDaysPerUnit,
+	validateName,
+	validateUnits
+} from '../lib/validation';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
@@ -11,37 +15,39 @@ const CreateForm = ({ setShowModal }) => {
 	const { addItem } = useContext(ItemsContext);
 
 	const [nameValue, setNameValue] = useState('');
-	const [daysPerUnitValue, setDaysPerUnitValue] = useState(1);
-	const [unitsValue, setUnitsValue] = useState(1);
+	// Texto, no números: ver la nota en lib/validation.js.
+	const [daysPerUnitValue, setDaysPerUnitValue] = useState('1');
+	const [unitsValue, setUnitsValue] = useState('1');
 	const [categoryValue, setCategoryValue] = useState(CATEGORIES.CAT1);
-	const [nameValidation, setNameValidation] = useState({
-		message: '',
-		error: false
-	});
+	const [errors, setErrors] = useState({});
 
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		const validation = validateName(nameValue, { requireValue: true });
-		if (validation.error) {
-			setNameValidation(validation);
-			return;
-		}
-
-		const newItem = {
-			name: nameValue,
-			daysPerUnit: daysPerUnitValue,
-			category: categoryValue,
-			depletesAt: depletionFrom(unitsValue, daysPerUnitValue)
+		const validated = {
+			name: validateName(nameValue, { requireValue: true }),
+			daysPerUnit: validateDaysPerUnit(daysPerUnitValue),
+			units: validateUnits(unitsValue)
 		};
 
-		addItem(newItem);
+		setErrors(validated);
+		if (Object.values(validated).some(field => field.error)) return;
+
+		const daysPerUnit = Number(daysPerUnitValue);
+
+		addItem({
+			name: nameValue,
+			daysPerUnit,
+			category: categoryValue,
+			depletesAt: depletionFrom(Number(unitsValue), daysPerUnit)
+		});
+
 		setShowModal(false);
 	};
 
 	const handleNameChange = e => {
 		setNameValue(e.target.value);
-		setNameValidation(validateName(e.target.value));
+		setErrors(prev => ({ ...prev, name: validateName(e.target.value) }));
 	};
 
 	return (
@@ -51,8 +57,8 @@ const CreateForm = ({ setShowModal }) => {
 				label='Nombre'
 				value={nameValue}
 				onChange={handleNameChange}
-				message={nameValidation.message}
-				error={nameValidation.error}
+				message={errors.name?.message}
+				error={errors.name?.error}
 				autoFocus
 			/>
 			<Select
@@ -73,14 +79,20 @@ const CreateForm = ({ setShowModal }) => {
 				label='Días por unidad'
 				value={daysPerUnitValue}
 				min={1}
-				onChange={e => setDaysPerUnitValue(+e.target.value)}
+				inputMode='numeric'
+				onChange={e => setDaysPerUnitValue(e.target.value)}
+				message={errors.daysPerUnit?.message}
+				error={errors.daysPerUnit?.error}
 			/>
 			<Input
 				type='number'
 				label='Unidades'
 				value={unitsValue}
 				min={0}
-				onChange={e => setUnitsValue(+e.target.value)}
+				inputMode='numeric'
+				onChange={e => setUnitsValue(e.target.value)}
+				message={errors.units?.message}
+				error={errors.units?.error}
 			/>
 			<div className='form-buttons'>
 				<Button type='button' onClick={() => setShowModal(false)}>
