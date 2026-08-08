@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { CATEGORIES } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
+import { daysLeft, unitsLeft } from '../lib/items';
 import Input from './Input';
 import Item from './Item';
 import Select from './Select';
 
 const ItemsList = () => {
-	const { listData } = useContext(ItemsContext);
+	const { listData, now } = useContext(ItemsContext);
 
 	const [searchBy, setSearchBy] = useState('');
 	const [filterBy, setFilterBy] = useState('all');
@@ -14,7 +15,7 @@ const ItemsList = () => {
 
 	let itemsFiltered = searchByName(listData, searchBy);
 	itemsFiltered = filterByCategory(itemsFiltered, filterBy);
-	itemsFiltered = sortItems(itemsFiltered, sortBy);
+	itemsFiltered = sortItems(itemsFiltered, sortBy, now);
 
 	const itemsRendered = renderItems(listData, itemsFiltered);
 
@@ -83,38 +84,25 @@ const filterByCategory = (items, filterBy) => {
 	return filteredItems;
 };
 
-const sortItems = (items, sortBy) => {
+const sortItems = (items, sortBy, now) => {
+	const by = read => (a, b) => read(a) - read(b);
+	const desc = compare => (a, b) => compare(b, a);
+
+	const byName = (a, b) => a.name.localeCompare(b.name, 'es');
+	const byDays = by(item => daysLeft(item, now));
+	const byUnits = by(item => unitsLeft(item, now));
+
 	switch (sortBy) {
 		case 1:
-			return [...items].sort((a, b) => {
-				if (a.name > b.name) return 1;
-				if (a.name < b.name) return -1;
-				return 0;
-			});
+			return [...items].sort(byName);
 		case 2:
-			return [...items].sort((a, b) => {
-				if (a.totalDays() > b.totalDays()) return 1;
-				if (a.totalDays() < b.totalDays()) return -1;
-				return 0;
-			});
+			return [...items].sort(byDays);
 		case 3:
-			return [...items].sort((a, b) => {
-				if (a.totalDays() < b.totalDays()) return 1;
-				if (a.totalDays() > b.totalDays()) return -1;
-				return 0;
-			});
+			return [...items].sort(desc(byDays));
 		case 4:
-			return [...items].sort((a, b) => {
-				if (a.units > b.units) return 1;
-				if (a.units < b.units) return -1;
-				return 0;
-			});
+			return [...items].sort(byUnits);
 		case 5:
-			return [...items].sort((a, b) => {
-				if (a.units < b.units) return 1;
-				if (a.units > b.units) return -1;
-				return 0;
-			});
+			return [...items].sort(desc(byUnits));
 		default:
 			return items;
 	}
@@ -125,9 +113,7 @@ const renderItems = (items, itemsFiltered) => {
 	if (items.error) return <p>Error al cargar los artículos</p>;
 	if (!itemsFiltered.length) return <p>No hay artículos que mostrar</p>;
 
-	return itemsFiltered.map(item => (
-		<Item item={item} key={item.id} days={item.totalDays()} />
-	));
+	return itemsFiltered.map(item => <Item item={item} key={item.id} />);
 };
 
 export default ItemsList;

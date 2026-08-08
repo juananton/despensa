@@ -6,68 +6,33 @@ import {
 	FiPlus,
 	FiTrash2
 } from 'react-icons/fi';
+import { WARNING_DAYS } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
+import { daysLeft, shiftUnits, unitsLeft } from '../lib/items';
 import Button from './Button';
 import DeleteForm from './DeleteForm';
 import EditForm from './EditForm';
 import Modal from './Modal';
 import Tag from './Tag';
 
-const Item = ({ item, days }) => {
-	const [daysCount, setDaysCount] = useState(days);
-	const [unitsCount, setUnitsCount] = useState(item.units);
+const Item = ({ item }) => {
+	const { updateItem, now } = useContext(ItemsContext);
 
-	const { updateItem } = useContext(ItemsContext);
-
-	const updatedItem = {
-		units: unitsCount,
-		id: item.id
-	};
+	// Derivados de la fecha de agotamiento: no hay estado que sincronizar.
+	const daysCount = daysLeft(item, now);
+	const unitsCount = unitsLeft(item, now);
 
 	// Add and remove units
+	const shift = delta =>
+		updateItem({ id: item.id, depletesAt: shiftUnits(item, delta) });
 
-	const addUnit = () => {
-		if (daysCount >= 0) {
-			setDaysCount(daysCount + item.daysPerUnit);
-			updateItem({ ...updatedItem, units: unitsCount + 1 });
-		}
-	};
-
-	const removeUnit = () => {
-		setDaysCount(daysCount - item.daysPerUnit);
-		updateItem({ ...updatedItem, units: unitsCount - 1 });
-	};
-
-	// Calculate days
-	useEffect(() => {
-		setDaysCount(unitsCount * item.daysPerUnit);
-	}, [unitsCount, item.daysPerUnit]);
-
-	// Calculate units
-	useEffect(() => {
-		setUnitsCount(Math.ceil(daysCount / item.daysPerUnit));
-	}, [daysCount, item.daysPerUnit]);
-
-	// Countdown logic
-	useEffect(() => {
-		let daysTimeout = null;
-		if (daysCount > 0) {
-			daysTimeout = setTimeout(() => {
-				setDaysCount(daysCount - 1);
-				updateItem(updatedItem);
-			}, 60000);
-		} else if (daysCount === 0) {
-			updateItem(updatedItem);
-		}
-		return () => {
-			clearTimeout(daysTimeout);
-		};
-	}, [daysCount, unitsCount]);
+	const addUnit = () => shift(1);
+	const removeUnit = () => shift(-1);
 
 	const finishWarning = () => {
 		if (daysCount === 0) {
 			return 'error';
-		} else if (daysCount <= 4) {
+		} else if (daysCount <= WARNING_DAYS) {
 			return 'warning';
 		}
 	};
@@ -125,7 +90,8 @@ const Item = ({ item, days }) => {
 		});
 	};
 
-	const closeModal = () => setModalContent(false);
+	const closeModal = () =>
+		setModalContent({ formDisplay: undefined, formTitle: '' });
 
 	return (
 		<div className='item'>
@@ -150,7 +116,6 @@ const Item = ({ item, days }) => {
 				</Button>
 				<div className='dropdownGroup' ref={dropdownRef}>
 					<Button
-						// className='btn btn-icon ntn-nobg'
 						ref={dropdownButtonRef}
 						onClick={handelClick}
 						variant='icon'

@@ -1,4 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
+import { TICK_MS } from '../constants';
+
+const API_URL = 'http://localhost:4000/data';
 
 const ItemsContext = createContext();
 
@@ -10,18 +13,30 @@ export const ItemsProvider = ({ children }) => {
 		loading: true
 	});
 
-	const setData = newData => {
-		setListData({ data: newData, loading: false, error: false });
-	};
+	// Acepta una lista o una función (prev => siguiente), para que dos acciones
+	// seguidas no se pisen leyendo el estado de un render anterior.
+	const setData = newData =>
+		setListData(prev => ({
+			data: typeof newData === 'function' ? newData(prev.data) : newData,
+			loading: false,
+			error: false
+		}));
+
 	const setError = () => setListData({ data: [], loading: false, error: true });
+
+	// Reloj compartido. Los días restantes se calculan contra él, así que basta
+	// con refrescarlo para que toda la lista se actualice sola.
+	const [now, setNow] = useState(() => Date.now());
+
+	useEffect(() => {
+		const interval = setInterval(() => setNow(Date.now()), TICK_MS);
+		return () => clearInterval(interval);
+	}, []);
 
 	// Fetch items
 	const fetchData = async signal => {
 		try {
-			const res = await fetch(
-				'http://localhost:4000/data?_sort=id&_order=desc',
-				{ signal }
-			);
+			const res = await fetch(`${API_URL}?_sort=id&_order=desc`, { signal });
 			if (res.ok) {
 				const data = await res.json();
 				setData(data);
@@ -29,7 +44,7 @@ export const ItemsProvider = ({ children }) => {
 				setError();
 			}
 		} catch (err) {
-			setError();
+			if (err.name !== 'AbortError') setError();
 		}
 	};
 
@@ -42,7 +57,7 @@ export const ItemsProvider = ({ children }) => {
 	// Add item
 	const addItem = async newItem => {
 		try {
-			const res = await fetch('http://localhost:4000/data', {
+			const res = await fetch(API_URL, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -50,49 +65,44 @@ export const ItemsProvider = ({ children }) => {
 				body: JSON.stringify(newItem)
 			});
 			const data = await res.json();
-			setData([data, ...listData.data]);
+			setData(prev => [data, ...prev]);
 		} catch (err) {}
 	};
 
 	// Update Item
 	const updateItem = async updatedItem => {
+		// Optimista: la interfaz responde al momento y el servidor confirma.
+		setData(prev =>
+			prev.map(item =>
+				item.id === updatedItem.id ? { ...item, ...updatedItem } : item
+			)
+		);
+
 		try {
-			const res = await fetch(`http://localhost:4000/data/${updatedItem.id}`, {
+			await fetch(`${API_URL}/${updatedItem.id}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(updatedItem)
 			});
-			const data = await res.json();
-			setData(
-				listData.data.map(item =>
-					item.id === data.id ? { ...item, ...data } : item
-				)
-			);
 		} catch (err) {}
 	};
 
 	// Delete item
 	const deleteItem = async id => {
-		await fetch(`http://localhost:4000/data/${id}`, {
+		await fetch(`${API_URL}/${id}`, {
 			method: 'DELETE'
 		});
 
-		setData(listData.data.filter(item => item.id !== id));
+		setData(prev => prev.filter(item => item.id !== id));
 	};
-
-	// Calculate totaldays of each item
-	listData.data.forEach(item => {
-		item.totalDays = () => {
-			return Math.ceil(item.units * item.daysPerUnit);
-		};
-	});
 
 	return (
 		<ItemsContext.Provider
 			value={{
 				listData,
+				now,
 				addItem,
 				deleteItem,
 				updateItem

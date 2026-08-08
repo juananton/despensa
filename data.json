@@ -2,59 +2,59 @@
   "data": [
     {
       "name": "Queso",
-      "daysPerUnit": 7,
       "category": "Comida",
-      "units": 1,
-      "id": 1
+      "daysPerUnit": 7,
+      "id": 1,
+      "depletesAt": "2026-08-15T12:08:28.431Z"
     },
     {
       "name": "Aceite",
-      "daysPerUnit": 7,
       "category": "Comida",
-      "units": 2,
-      "id": 2
+      "daysPerUnit": 7,
+      "id": 2,
+      "depletesAt": "2026-08-22T12:08:28.431Z"
     },
     {
       "name": "Lentejas",
-      "daysPerUnit": 5,
       "category": "Comida",
-      "units": 1,
-      "id": 4
+      "daysPerUnit": 5,
+      "id": 4,
+      "depletesAt": "2026-08-13T12:08:28.431Z"
     },
     {
       "name": "Leche",
-      "daysPerUnit": 8,
       "category": "Comida",
-      "units": 3,
-      "id": 5
+      "daysPerUnit": 8,
+      "id": 5,
+      "depletesAt": "2026-09-01T12:08:28.431Z"
     },
     {
       "name": "Lavavajillas",
-      "daysPerUnit": 30,
-      "units": 1,
       "category": "Limpieza",
-      "id": 6
+      "daysPerUnit": 30,
+      "id": 6,
+      "depletesAt": "2026-09-07T12:08:28.431Z"
     },
     {
       "name": "Papel higiénico",
-      "daysPerUnit": 7,
-      "units": 6,
       "category": "Baño",
-      "id": 7
+      "daysPerUnit": 7,
+      "id": 7,
+      "depletesAt": "2026-09-19T12:08:28.431Z"
     },
     {
       "name": "Pasta de dientes",
-      "daysPerUnit": 15,
-      "units": 2,
       "category": "Baño",
-      "id": 8
+      "daysPerUnit": 15,
+      "id": 8,
+      "depletesAt": "2026-09-07T12:08:28.431Z"
     },
     {
       "name": "Detergente lavadora",
-      "daysPerUnit": 30,
-      "units": 1,
       "category": "Limpieza",
-      "id": 9
+      "daysPerUnit": 30,
+      "id": 9,
+      "depletesAt": "2026-09-07T12:08:28.431Z"
     }
   ]
 }

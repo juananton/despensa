@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react';
 import { CATEGORIES } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
+import { rescaleToDaysPerUnit } from '../lib/items';
+import { validateName } from '../lib/validation';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
@@ -19,11 +21,9 @@ const EditForm = ({ item, closeModal }) => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		if (!nameValue) {
-			setNameValidation({
-				message: 'El campo de nombre no puede quedar vacío.',
-				error: true
-			});
+		const validation = validateName(nameValue, { requireValue: true });
+		if (validation.error) {
+			setNameValidation(validation);
 			return;
 		}
 
@@ -34,24 +34,19 @@ const EditForm = ({ item, closeModal }) => {
 			id: item.id
 		};
 
+		// Cambiar la duración por unidad reescala el stock que quedaba, para no
+		// perder lo ya consumido.
+		if (daysPerUnitValue !== item.daysPerUnit) {
+			updatedItem.depletesAt = rescaleToDaysPerUnit(item, daysPerUnitValue);
+		}
+
 		updateItem(updatedItem);
 		closeModal(true);
 	};
 
 	const handleNameChange = e => {
-		if (nameValue.length >= 0 && nameValue.length < 25) {
-			setNameValidation({
-				message: '',
-				error: false
-			});
-		} else {
-			setNameValidation({
-				message: 'El nombre debe tener menos de 20 caracteres',
-				error: true
-			});
-		}
-
 		setNameValue(e.target.value);
+		setNameValidation(validateName(e.target.value));
 	};
 
 	return (

@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react';
 import { CATEGORIES } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
+import { depletionFrom } from '../lib/items';
+import { validateName } from '../lib/validation';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
@@ -20,19 +22,17 @@ const CreateForm = ({ setShowModal }) => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		if (!nameValue) {
-			setNameValidation({
-				message: 'El campo de nombre no puede quedar vacío.',
-				error: true
-			});
+		const validation = validateName(nameValue, { requireValue: true });
+		if (validation.error) {
+			setNameValidation(validation);
 			return;
 		}
 
 		const newItem = {
 			name: nameValue,
 			daysPerUnit: daysPerUnitValue,
-			units: unitsValue,
-			category: categoryValue
+			category: categoryValue,
+			depletesAt: depletionFrom(unitsValue, daysPerUnitValue)
 		};
 
 		addItem(newItem);
@@ -40,19 +40,8 @@ const CreateForm = ({ setShowModal }) => {
 	};
 
 	const handleNameChange = e => {
-		if (nameValue.length >= 0 && nameValue.length < 25) {
-			setNameValidation({
-				message: '',
-				error: false
-			});
-		} else {
-			setNameValidation({
-				message: 'El nombre debe tener menos de 20 caracteres',
-				error: true
-			});
-		}
-
 		setNameValue(e.target.value);
+		setNameValidation(validateName(e.target.value));
 	};
 
 	return (
