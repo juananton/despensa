@@ -306,6 +306,12 @@ h6 {
   font-size: 1.5rem;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .item {
   display: flex;
   justify-content: space-between;

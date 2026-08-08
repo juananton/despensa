@@ -14,18 +14,20 @@ const Header = () => {
 			<Modal formTitle='Añadir' formId='create' closeModal={closeModal}>
 				{showModal && <CreateForm setShowModal={setShowModal} />}
 			</Modal>
-			<h1>Mi despensa</h1>
-			<Button use='primary' onClick={() => setShowModal(true)}>
-				Añadir artículo
-			</Button>
-			<Button
-				variant='icon'
-				use='nobg'
-				title='Salir'
-				onClick={() => supabase.auth.signOut()}
-			>
-				<FiLogOut className='icon' />
-			</Button>
+			<h1>Despensa</h1>
+			<div className='header-buttons'>
+				<Button use='primary' onClick={() => setShowModal(true)}>
+					Añadir artículo
+				</Button>
+				<Button
+					variant='icon'
+					use='nobg'
+					title='Salir'
+					onClick={() => supabase.auth.signOut()}
+				>
+					<FiLogOut className='icon' />
+				</Button>
+			</div>
 		</div>
 	);
 };

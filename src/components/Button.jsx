@@ -23,7 +23,7 @@ const Button = forwardRef(
 			<button
 				ref={ref}
 				{...props}
-				className={`btn ${btnVariant} ${btnUse} ${className} || ''`}
+				className={`btn ${btnVariant} ${btnUse} ${className || ''}`.trim()}
 			>
 				{children}
 			</button>

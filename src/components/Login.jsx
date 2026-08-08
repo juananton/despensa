@@ -39,7 +39,7 @@ const Login = () => {
 	return (
 		<div className='manager'>
 			<div className='header'>
-				<h1>Mi despensa</h1>
+				<h1>Despensa</h1>
 			</div>
 			<form className='create-form' onSubmit={handleSubmit}>
 				<Input
