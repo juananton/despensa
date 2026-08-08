@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fi';
 import { WARNING_DAYS } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
-import { daysLeft, shiftUnits, unitsLeft } from '../lib/items';
+import { daysLeft, unitsLeft } from '../lib/items';
 import Button from './Button';
 import DeleteForm from './DeleteForm';
 import EditForm from './EditForm';
@@ -16,18 +16,15 @@ import Modal from './Modal';
 import Tag from './Tag';
 
 const Item = ({ item }) => {
-	const { updateItem, now } = useContext(ItemsContext);
+	const { shiftUnits } = useContext(ItemsContext);
 
 	// Derivados de la fecha de agotamiento: no hay estado que sincronizar.
-	const daysCount = daysLeft(item, now);
-	const unitsCount = unitsLeft(item, now);
+	const daysCount = daysLeft(item);
+	const unitsCount = unitsLeft(item);
 
 	// Add and remove units
-	const shift = delta =>
-		updateItem({ id: item.id, depletesAt: shiftUnits(item, delta) });
-
-	const addUnit = () => shift(1);
-	const removeUnit = () => shift(-1);
+	const addUnit = () => shiftUnits(item.id, 1);
+	const removeUnit = () => shiftUnits(item.id, -1);
 
 	const finishWarning = () => {
 		if (daysCount === 0) {

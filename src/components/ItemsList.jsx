@@ -7,7 +7,7 @@ import Item from './Item';
 import Select from './Select';
 
 const ItemsList = () => {
-	const { listData, now } = useContext(ItemsContext);
+	const { listData } = useContext(ItemsContext);
 
 	const [searchBy, setSearchBy] = useState('');
 	const [filterBy, setFilterBy] = useState('all');
@@ -15,7 +15,7 @@ const ItemsList = () => {
 
 	let itemsFiltered = searchByName(listData, searchBy);
 	itemsFiltered = filterByCategory(itemsFiltered, filterBy);
-	itemsFiltered = sortItems(itemsFiltered, sortBy, now);
+	itemsFiltered = sortItems(itemsFiltered, sortBy);
 
 	const itemsRendered = renderItems(listData, itemsFiltered);
 
@@ -84,13 +84,13 @@ const filterByCategory = (items, filterBy) => {
 	return filteredItems;
 };
 
-const sortItems = (items, sortBy, now) => {
+const sortItems = (items, sortBy) => {
 	const by = read => (a, b) => read(a) - read(b);
 	const desc = compare => (a, b) => compare(b, a);
 
 	const byName = (a, b) => a.name.localeCompare(b.name, 'es');
-	const byDays = by(item => daysLeft(item, now));
-	const byUnits = by(item => unitsLeft(item, now));
+	const byDays = by(item => daysLeft(item));
+	const byUnits = by(item => unitsLeft(item));
 
 	switch (sortBy) {
 		case 1:

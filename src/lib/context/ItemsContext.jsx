@@ -1,111 +1,106 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { TICK_MS } from '../constants';
-
-const API_URL = 'http://localhost:4000/data';
+import { fromRow, toRow } from '../items';
+import { supabase } from '../supabase';
 
 const ItemsContext = createContext();
 
 export const ItemsProvider = ({ children }) => {
-	// Data states
 	const [listData, setListData] = useState({
 		data: [],
 		error: false,
 		loading: true
 	});
 
-	// Acepta una lista o una función (prev => siguiente), para que dos acciones
-	// seguidas no se pisen leyendo el estado de un render anterior.
-	const setData = newData =>
-		setListData(prev => ({
-			data: typeof newData === 'function' ? newData(prev.data) : newData,
-			loading: false,
-			error: false
-		}));
-
-	const setError = () => setListData({ data: [], loading: false, error: true });
-
-	// Reloj compartido. Los días restantes se calculan contra él, así que basta
-	// con refrescarlo para que toda la lista se actualice sola.
-	const [now, setNow] = useState(() => Date.now());
+	// Los días restantes los calcula cada componente leyendo la hora en el
+	// momento de pintar. Esto sólo fuerza un repintado periódico para que la
+	// cuenta atrás avance sola: guardar aquí la hora y pasarla hacia abajo
+	// significaba tener dos relojes desfasados haciendo la misma cuenta.
+	const [, setTick] = useState(0);
 
 	useEffect(() => {
-		const interval = setInterval(() => setNow(Date.now()), TICK_MS);
+		const interval = setInterval(() => setTick(tick => tick + 1), TICK_MS);
 		return () => clearInterval(interval);
 	}, []);
 
-	// Fetch items
-	const fetchData = async signal => {
-		try {
-			const res = await fetch(`${API_URL}?_sort=id&_order=desc`, { signal });
-			if (res.ok) {
-				const data = await res.json();
-				setData(data);
-			} else {
-				setError();
-			}
-		} catch (err) {
-			if (err.name !== 'AbortError') setError();
-		}
-	};
+	const fetchData = useCallback(async () => {
+		// El desempate por id no es cosmético: sin él, dos artículos con el mismo
+		// created_at salen en el orden físico de las filas, y al actualizar una
+		// Postgres la reescribe al final de la tabla. Sin esto, cada `+` o `−`
+		// hace que el artículo salte de sitio en la lista.
+		const { data, error } = await supabase
+			.from('items')
+			.select('*')
+			.order('created_at', { ascending: false })
+			.order('id');
 
-	useEffect(() => {
-		const controller = new AbortController();
-		fetchData(controller.signal);
-		return () => controller.abort();
+		if (error) {
+			setListData({ data: [], loading: false, error: true });
+			return;
+		}
+
+		setListData({ data: data.map(fromRow), loading: false, error: false });
 	}, []);
 
-	// Add item
-	const addItem = async newItem => {
-		try {
-			const res = await fetch(API_URL, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(newItem)
-			});
-			const data = await res.json();
-			setData(prev => [data, ...prev]);
-		} catch (err) {}
-	};
+	useEffect(() => {
+		fetchData();
 
-	// Update Item
-	const updateItem = async updatedItem => {
-		// Optimista: la interfaz responde al momento y el servidor confirma.
-		setData(prev =>
-			prev.map(item =>
-				item.id === updatedItem.id ? { ...item, ...updatedItem } : item
+		// Cualquier cambio en la tabla recarga la lista, venga de este dispositivo
+		// o del otro. Con veinte artículos sale más barato que ir reconciliando
+		// cada evento por separado, y no hay forma de que las dos pantallas
+		// acaben divergiendo.
+		const channel = supabase
+			.channel('items-changes')
+			.on(
+				'postgres_changes',
+				{ event: '*', schema: 'public', table: 'items' },
+				fetchData
 			)
-		);
+			.subscribe();
 
-		try {
-			await fetch(`${API_URL}/${updatedItem.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(updatedItem)
-			});
-		} catch (err) {}
+		return () => {
+			supabase.removeChannel(channel);
+		};
+	}, [fetchData]);
+
+	const addItem = async newItem => {
+		const { error } = await supabase.from('items').insert(toRow(newItem));
+		if (!error) fetchData();
 	};
 
-	// Delete item
+	const updateItem = async ({ id, ...changes }) => {
+		const { error } = await supabase
+			.from('items')
+			.update(toRow(changes))
+			.eq('id', id);
+
+		if (!error) fetchData();
+	};
+
 	const deleteItem = async id => {
-		await fetch(`${API_URL}/${id}`, {
-			method: 'DELETE'
+		const { error } = await supabase.from('items').delete().eq('id', id);
+		if (!error) fetchData();
+	};
+
+	// Sumar o restar unidades. Es una operación relativa que resuelve el
+	// servidor: dos `+` simultáneos suman dos, no uno.
+	const shiftUnits = async (id, delta) => {
+		const { error } = await supabase.rpc('shift_units', {
+			item_id: id,
+			delta
 		});
 
-		setData(prev => prev.filter(item => item.id !== id));
+		if (!error) fetchData();
 	};
 
 	return (
 		<ItemsContext.Provider
 			value={{
 				listData,
-				now,
 				addItem,
 				deleteItem,
-				updateItem
+				updateItem,
+				shiftUnits
 			}}
 		>
 			{children}

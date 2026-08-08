@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { FiLogOut } from 'react-icons/fi';
+import { supabase } from '../lib/supabase';
 import Button from './Button';
 import CreateForm from './CreateForm';
 import Modal from './Modal';
@@ -15,6 +17,14 @@ const Header = () => {
 			<h1>Mi despensa</h1>
 			<Button use='primary' onClick={() => setShowModal(true)}>
 				Añadir artículo
+			</Button>
+			<Button
+				variant='icon'
+				use='nobg'
+				title='Salir'
+				onClick={() => supabase.auth.signOut()}
+			>
+				<FiLogOut className='icon' />
 			</Button>
 		</div>
 	);
