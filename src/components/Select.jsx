@@ -1,4 +1,3 @@
-import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
 const Select = ({ label, children, onChange, ...props }) => {
