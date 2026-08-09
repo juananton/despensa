@@ -1,10 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { CATEGORIES } from '../lib/constants';
+import { useContext, useState } from 'react';
 import ItemsContext from '../lib/context/ItemsContext';
 import { daysLeft, unitsLeft } from '../lib/items';
-import Input from './Input';
 import Item from './Item';
-import Select from './Select';
+import Toolbar from './Toolbar';
 
 const ItemsList = () => {
 	const { listData } = useContext(ItemsContext);
@@ -21,44 +19,14 @@ const ItemsList = () => {
 
 	return (
 		<div>
-			<div className='toolbar'>
-				<div className='wrapper1'>
-					<Input
-						type='text'
-						value={searchBy}
-						placeholder='Buscar'
-						onChange={e => setSearchBy(e.target.value)}
-					/>
-				</div>
-				<div className='wrapper2'>
-					<Select
-						value={filterBy}
-						onChange={e => {
-							setFilterBy(e.target.value);
-						}}
-					>
-						<option value='all'>Todas</option>
-						{Object.values(CATEGORIES).map(cat => (
-							<option key={cat} value={cat}>
-								{cat}
-							</option>
-						))}
-					</Select>
-					<Select
-						value={sortBy}
-						onChange={e => {
-							setSortBy(+e.target.value);
-						}}
-					>
-						<option value='0'>Más recientes</option>
-						<option value='1'>Nombre</option>
-						<option value='2'>Menos días</option>
-						<option value='3'>Más días</option>
-						<option value='4'>Menos unidades</option>
-						<option value='5'>Más unidades</option>
-					</Select>
-				</div>
-			</div>
+			<Toolbar
+				search={searchBy}
+				onSearchChange={setSearchBy}
+				category={filterBy}
+				onCategoryChange={setFilterBy}
+				sort={sortBy}
+				onSortChange={setSortBy}
+			/>
 
 			{itemsRendered}
 		</div>
