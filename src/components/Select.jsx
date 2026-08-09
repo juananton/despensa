@@ -12,7 +12,7 @@ const Select = ({ label, children, onChange, ...props }) => {
 
 	return (
 		<label className='select'>
-			<span className='label'>{label}</span>
+			{label && <span className='label'>{label}</span>}
 			<div className='wrapper'>
 				<select {...props} onChange={handleChange} className='select'>
 					{children}

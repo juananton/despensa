@@ -1,4 +1,7 @@
+import { useState } from 'react';
+import { FiSearch, FiX } from 'react-icons/fi';
 import { CATEGORIES } from '../lib/constants';
+import Button from './Button';
 import Input from './Input';
 import Select from './Select';
 
@@ -10,17 +13,41 @@ const Toolbar = ({
 	sort,
 	onSortChange
 }) => {
+	const [searchOpen, setSearchOpen] = useState(false);
+
+	const openSearch = () => setSearchOpen(true);
+
+	// Cerrar también limpia el término: dejar la barra oculta con un filtro
+	// aplicado que ya no se ve en ningún sitio sería confuso.
+	const closeSearch = () => {
+		setSearchOpen(false);
+		onSearchChange('');
+	};
+
+	if (searchOpen) {
+		return (
+			<div className='toolbar'>
+				<div className='search-bar'>
+					<FiSearch className='icon icon-search' />
+					<Input
+						type='text'
+						value={search}
+						placeholder='Buscar'
+						onChange={e => onSearchChange(e.target.value)}
+						onKeyDown={e => e.key === 'Escape' && closeSearch()}
+						autoFocus
+					/>
+					<Button variant='icon' use='nobg' onClick={closeSearch}>
+						<FiX className='icon' />
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className='toolbar'>
-			<div className='wrapper1'>
-				<Input
-					type='text'
-					value={search}
-					placeholder='Buscar'
-					onChange={e => onSearchChange(e.target.value)}
-				/>
-			</div>
-			<div className='wrapper2'>
+			<div className='wrapper'>
 				<Select
 					value={category}
 					onChange={e => onCategoryChange(e.target.value)}
@@ -41,6 +68,9 @@ const Toolbar = ({
 					<option value='5'>Más unidades</option>
 				</Select>
 			</div>
+			<Button variant='icon' use='nobg' onClick={openSearch}>
+				<FiSearch className='icon' />
+			</Button>
 		</div>
 	);
 };

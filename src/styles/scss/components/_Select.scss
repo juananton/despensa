@@ -17,6 +17,11 @@
 		appearance: none;
 		height: 2.5rem;
 		width: 100%;
+		// appearance:none sólo quita la flecha y el bisel nativos; sin declarar
+		// fondo y texto propios, Android le sigue pintando su gris de sistema al
+		// <select>. Con los dos puestos, respeta los nuestros.
+		background-color: $color-white;
+		color: $color-black;
 	}
 
 	.icon {
