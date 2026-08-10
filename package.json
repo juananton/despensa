@@ -5,6 +5,7 @@
 		"dev": "vite --host",
 		"build": "vite build",
 		"preview": "vite preview",
+		"test": "node --test 'supabase/functions/**/*.test.js'",
 		"format": "prettier --write .",
 		"lint": "eslint . --ext .js,.jsx --fix",
 		"compile:sass": "sass src/styles/scss/index.scss src/styles/css/index.css -w"
