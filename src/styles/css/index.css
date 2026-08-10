@@ -469,6 +469,22 @@ h6 {
   color: #bebebe;
   cursor: default;
 }
+.dropdownGroup .dropdown li .icon {
+  flex-shrink: 0;
+}
+.dropdownGroup .dropdown li .label {
+  display: flex;
+  flex-direction: column;
+}
+.dropdownGroup .dropdown li .note {
+  font-size: 0.75rem;
+  color: #808080;
+  margin-top: 0.125rem;
+  white-space: normal;
+}
+.dropdownGroup .dropdown li .note.error {
+  color: rgb(240, 35, 35);
+}
 @media (hover: hover) {
   .dropdownGroup .dropdown li:not(.disabled):hover {
     background-color: rgb(220, 236, 220);

@@ -7,8 +7,8 @@ import CreateForm from './CreateForm';
 import Dropdown from './Dropdown';
 import Modal from './Modal';
 
-const DENIED_TITLE =
-	'Has bloqueado los avisos para esta web. Se vuelven a permitir desde los ajustes del sitio, en el navegador.';
+const DENIED_NOTE =
+	'Los has bloqueado en el navegador. Se vuelven a permitir desde los ajustes del sitio.';
 
 /**
  * La opción de avisos vale para este dispositivo, no para la cuenta: por eso
@@ -24,7 +24,7 @@ const pushOption = push => {
 			{
 				icon: <FiBellOff className='icon' />,
 				label: 'Avisos bloqueados',
-				title: DENIED_TITLE,
+				note: DENIED_NOTE,
 				disabled: true,
 				onClick: () => {}
 			}
@@ -37,7 +37,8 @@ const pushOption = push => {
 		{
 			icon: on ? <FiBellOff className='icon' /> : <FiBell className='icon' />,
 			label: on ? 'Desactivar avisos' : 'Activar avisos',
-			title: push.error ?? undefined,
+			note: push.error ?? undefined,
+			noteTone: 'error',
 			disabled: push.busy,
 			onClick: on ? push.disable : push.enable
 		}

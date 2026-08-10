@@ -86,7 +86,6 @@ const Dropdown = ({ icon, title, options }) => {
 					{options.map(option => (
 						<li
 							key={option.label}
-							title={option.title}
 							className={option.disabled ? 'disabled' : ''}
 							onClick={() => {
 								if (option.disabled) return;
@@ -96,7 +95,18 @@ const Dropdown = ({ icon, title, options }) => {
 							}}
 						>
 							{option.icon}
-							<span>{option.label}</span>
+							<span className='label'>
+								{option.label}
+								{/* Segunda línea visible, no un `title`: el tooltip no
+								    existe en una pantalla táctil, así que ahí una
+								    explicación o un error quedaban invisibles justo en
+								    el único sitio donde se usa la app. */}
+								{option.note && (
+									<small className={`note ${option.noteTone ?? ''}`}>
+										{option.note}
+									</small>
+								)}
+							</span>
 						</li>
 					))}
 				</ul>

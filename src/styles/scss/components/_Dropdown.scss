@@ -44,6 +44,30 @@
 				color: $color-gray-2;
 				cursor: default;
 			}
+
+			// Sin esto el flex se cobra el espacio de la nota encogiendo el icono,
+			// que es lo único de la fila que puede achicarse sin partirse.
+			.icon {
+				flex-shrink: 0;
+			}
+
+			.label {
+				display: flex;
+				flex-direction: column;
+			}
+
+			// La nota va a línea aparte y sí puede partirse: es la única que
+			// puede ser larga, y el menú entero se ensancharía con ella.
+			.note {
+				font-size: $text-xs;
+				color: $color-gray-3;
+				margin-top: 0.125rem;
+				white-space: normal;
+
+				&.error {
+					color: $color-red;
+				}
+			}
 		}
 
 		@media (hover: hover) {
