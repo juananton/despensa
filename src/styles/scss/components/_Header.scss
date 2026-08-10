@@ -13,3 +13,18 @@
 	align-items: center;
 	gap: 0.5rem;
 }
+
+.add-button {
+	width: 88px;
+}
+
+.logo {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.logo img {
+	width: 32px;
+	transform: translateY(-3px);
+}

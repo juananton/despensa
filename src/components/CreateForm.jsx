@@ -105,7 +105,7 @@ const CreateForm = ({ setShowModal }) => {
 			</div>
 			<Input
 				type='number'
-				label='Unidades añadidas'
+				label='Unidades'
 				value={unitsValue}
 				min={0}
 				inputMode='numeric'

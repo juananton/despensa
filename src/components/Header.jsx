@@ -56,10 +56,20 @@ const Header = () => {
 			<Modal formTitle='Añadir' formId='create' closeModal={closeModal}>
 				{showModal && <CreateForm setShowModal={setShowModal} />}
 			</Modal>
-			<h1>Despensa</h1>
+			<div className='logo'>
+				{/* Sin /public: Vite copia esa carpeta a la raíz al construir, así
+				    que en producción el fichero está en /logo-icon.svg. El servidor
+				    de desarrollo sirve las dos rutas y esconde el fallo. */}
+				<img src='/logo-icon.svg' alt='' />
+				<h1>Despensa</h1>
+			</div>
 			<div className='header-buttons'>
-				<Button use='primary' onClick={() => setShowModal(true)}>
-					Añadir artículo
+				<Button
+					className='add-button'
+					use='primary'
+					onClick={() => setShowModal(true)}
+				>
+					Añadir
 				</Button>
 				<Dropdown
 					icon={<FiSettings className='icon' />}

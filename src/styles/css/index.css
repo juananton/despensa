@@ -286,7 +286,7 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-top: 2rem;
+  margin-top: 1.25rem;
 }
 .form-buttons Button {
   margin-left: 0.75rem;
@@ -314,6 +314,21 @@ h6 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.add-button {
+  width: 88px;
+}
+
+.logo {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.logo img {
+  width: 32px;
+  transform: translateY(-3px);
 }
 
 .item {
@@ -516,7 +531,7 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1rem;
 }
 .modal-window-header h1 {
   font-size: 1.5rem;
