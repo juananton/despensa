@@ -27,20 +27,20 @@ self.addEventListener('push', event => {
 		self.registration.showNotification(notice.title, {
 			body: notice.body,
 			lang: 'es',
-			// La imagen grande de la derecha. Es lo único del aviso que decide
-			// la app: el icono del círculo de la cabecera lo saca Chrome de su
-			// caché de iconos por origen, y ahí no llega ninguna API — se
-			// intentaron el manifest, un favicon PNG con URL nueva y rehacer la
-			// suscripción, y siguió mostrando el logo que tenía guardado.
+			// Sin `icon`: esa opción es la imagen grande de la derecha, y
+			// repetía la bolsa que ya sale en la cabecera del aviso. En su hueco
+			// Chrome pinta un monograma gris con la inicial del sitio; vacío no
+			// puede quedarse.
 			//
-			// Sin esto la casilla no queda vacía: Chrome se inventa un monograma
-			// gris con la inicial del sitio.
+			// El icono de la cabecera no se declara aquí: sale del manifest, y
+			// sólo desde que la app está instalada. Mientras fue un acceso
+			// directo suelto, Chrome usaba el favicon que tenía cacheado para el
+			// origen y no había forma de moverlo desde la web.
 			//
-			// No se pone `badge` (el glifo de la barra de estado): Android lo
-			// pinta en monocromo a partir del alfa, y esta bolsa, que tiene
+			// Tampoco se pone `badge` (el glifo de la barra de estado): Android
+			// lo pinta en monocromo a partir del alfa, y esta bolsa, que tiene
 			// relleno opaco, saldría maciza y sin el contorno que la hace
 			// reconocible.
-			icon: '/icono.png',
 			// El tag hace que un aviso sustituya al anterior del mismo tipo en vez
 			// de apilarse: si el resumen del lunes sigue sin leerse el lunes
 			// siguiente, no quedan dos.

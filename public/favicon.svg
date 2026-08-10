@@ -1,6 +1,14 @@
-<svg width="410" height="410" viewBox="0 0 410 410" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="410" height="410" rx="48" fill="white"/>
-<path opacity="0.16" d="M68.3333 153.75H341.667L327.402 310.592C326.631 319.081 322.714 326.975 316.421 332.724C310.128 338.474 301.913 341.663 293.389 341.667H116.611C108.087 341.663 99.872 338.474 93.579 332.724C87.286 326.975 83.3693 319.081 82.5979 310.592L68.3333 153.75Z" fill="#009A24" fill-opacity="0.2"/>
-<path d="M68.3333 153.75H341.667L327.402 310.592C326.631 319.081 322.714 326.975 316.421 332.724C310.128 338.474 301.913 341.663 293.389 341.667H116.611C108.087 341.663 99.872 338.474 93.579 332.724C87.286 326.975 83.3693 319.081 82.5979 310.592L68.3333 153.75Z" fill="#009A24" fill-opacity="0.2" stroke="#009A24" stroke-width="24" stroke-linejoin="round"/>
-<path d="M136.667 187.917V136.667C136.667 118.544 143.866 101.163 156.681 88.3479C169.496 75.5329 186.877 68.3335 205 68.3335C223.123 68.3335 240.504 75.5329 253.319 88.3479C266.134 101.163 273.333 118.544 273.333 136.667V187.917" stroke="#009A24" stroke-width="24" stroke-linecap="round"/>
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="500" height="500" fill="white"/>
+<!-- La bolsa ocupa el 80% del ancho: es el techo que deja el recorte circular
+     de Android, y lo marca la esquina inferior izquierda, que es el punto del
+     trazo más lejano del centro.
+
+     El translate de fuera la sube 2 unidades sobre el centro geométrico. El asa
+     pesa menos que el cuerpo, así que centrada por sus límites se ve caída. -->
+<g transform="translate(250 248) scale(1.3514) translate(-250 -234)">
+<path opacity="0.16" d="M114 183H386L371.805 339.077C371.037 347.525 367.14 355.38 360.877 361.101C354.615 366.823 346.44 369.997 337.958 370H162.042C153.56 369.997 145.385 366.823 139.123 361.101C132.86 355.38 128.963 347.525 128.195 339.077L114 183Z" fill="#009A24" fill-opacity="0.2"/>
+<path d="M114 183H386L371.805 339.077C371.037 347.525 367.14 355.38 360.877 361.101C354.615 366.823 346.44 369.997 337.958 370H162.042C153.56 369.997 145.385 366.823 139.123 361.101C132.86 355.38 128.963 347.525 128.195 339.077L114 183Z" fill="#009A24" fill-opacity="0.2" stroke="#009A24" stroke-width="24" stroke-linejoin="round"/>
+<path d="M182 217V166C182 147.965 189.164 130.669 201.917 117.917C214.669 105.164 231.965 98 250 98C268.035 98 285.331 105.164 298.083 117.917C310.836 130.669 318 147.965 318 166V217" stroke="#009A24" stroke-width="24" stroke-linecap="round"/>
+</g>
 </svg>
