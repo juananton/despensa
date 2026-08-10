@@ -9,7 +9,7 @@ const Modal = ({ formTitle, children, closeModal }) => {
 		<div className='modal-overlay'>
 			<div className='modal-window'>
 				<div className='modal-window-header'>
-					<h1>{formTitle}</h1>
+					<h1>{`${formTitle} artículo`}</h1>
 					<Button
 						className='close'
 						variant='icon'

@@ -53,7 +53,7 @@ const Header = () => {
 
 	return (
 		<div className='header'>
-			<Modal formTitle='Añadir' formId='create' closeModal={closeModal}>
+			<Modal formTitle='Nuevo' formId='create' closeModal={closeModal}>
 				{showModal && <CreateForm setShowModal={setShowModal} />}
 			</Modal>
 			<div className='logo'>
@@ -64,11 +64,7 @@ const Header = () => {
 				<h1>Despensa</h1>
 			</div>
 			<div className='header-buttons'>
-				<Button
-					className='add-button'
-					use='primary'
-					onClick={() => setShowModal(true)}
-				>
+				<Button use='primary' onClick={() => setShowModal(true)}>
 					Añadir
 				</Button>
 				<Dropdown
