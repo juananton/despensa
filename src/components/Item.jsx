@@ -1,4 +1,10 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import {
+	useContext,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState
+} from 'react';
 import {
 	FiEdit,
 	FiMinus,
@@ -14,6 +20,10 @@ import DeleteForm from './DeleteForm';
 import EditForm from './EditForm';
 import Modal from './Modal';
 import Tag from './Tag';
+
+// El hueco de 0.5rem que el menú deja respecto al botón (ver _Item.scss), más
+// otro tanto para no pegarlo al borde de la pantalla.
+const DROPDOWN_MARGIN = 16;
 
 const Item = ({ item }) => {
 	const { shiftUnits } = useContext(ItemsContext);
@@ -36,8 +46,10 @@ const Item = ({ item }) => {
 
 	// Actions dropdown
 	const [dropdownOpened, setDropdownOpened] = useState(false);
+	const [dropdownUpwards, setDropdownUpwards] = useState(false);
 	const dropdownRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
+	const dropdownMenuRef = useRef(null);
 
 	const openDropdown = () => setDropdownOpened(true);
 	const closeDropdown = () => setDropdownOpened(false);
@@ -50,6 +62,21 @@ const Item = ({ item }) => {
 			dropdownButtonRef.current.blur();
 		}
 	};
+
+	// El menú cabe hacia abajo salvo en los últimos artículos de la lista, donde
+	// se saldría de la pantalla. Se mide con el botón (no con el propio menú)
+	// porque el botón no se mueve al voltearlo: medir el menú haría que la
+	// decisión dependiese de su resultado. useLayoutEffect y no useEffect para
+	// que la corrección entre antes de pintar, sin salto visible.
+	useLayoutEffect(() => {
+		if (!dropdownOpened) return;
+
+		const button = dropdownButtonRef.current.getBoundingClientRect();
+		const menuHeight = dropdownMenuRef.current.offsetHeight;
+		const spaceBelow = window.innerHeight - button.bottom;
+
+		setDropdownUpwards(spaceBelow < menuHeight + DROPDOWN_MARGIN);
+	}, [dropdownOpened]);
 
 	useEffect(() => {
 		if (!dropdownOpened) return;
@@ -122,7 +149,10 @@ const Item = ({ item }) => {
 						<FiMoreVertical className='icon' />
 					</Button>
 					{dropdownOpened && (
-						<ul className='dropdown'>
+						<ul
+							ref={dropdownMenuRef}
+							className={`dropdown${dropdownUpwards ? ' upwards' : ''}`}
+						>
 							<li
 								onClick={() => {
 									showEditModal();

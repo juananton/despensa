@@ -387,6 +387,10 @@ h6 {
   color: rgb(0, 154, 36);
   min-width: 148px;
 }
+.item .controls .dropdown.upwards {
+  top: auto;
+  bottom: 3rem;
+}
 .item .controls .dropdown li {
   display: flex;
   align-items: center;

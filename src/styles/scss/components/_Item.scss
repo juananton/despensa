@@ -80,6 +80,13 @@
 			color: $color-green;
 			min-width: 148px;
 
+			// En los últimos artículos de la lista no hay sitio abajo, así que el
+			// menú se voltea sobre el botón (lo decide Item.jsx midiendo el hueco).
+			&.upwards {
+				top: auto;
+				bottom: 3rem;
+			}
+
 			li {
 				display: flex;
 				align-items: center;
