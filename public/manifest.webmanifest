@@ -1,0 +1,16 @@
+{
+	"name": "Despensa",
+	"short_name": "Despensa",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#009a24",
+	"lang": "es",
+	"icons": [
+		{
+			"src": "/icono.png",
+			"sizes": "410x410",
+			"type": "image/png"
+		}
+	]
+}

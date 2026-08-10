@@ -27,12 +27,15 @@ self.addEventListener('push', event => {
 		self.registration.showNotification(notice.title, {
 			body: notice.body,
 			lang: 'es',
-			// La imagen grande del aviso desplegado. No se pone `badge` (el
-			// iconito de la barra de estado) porque Android lo pinta en
-			// monocromo a partir del alfa, y este icono en blanco sobre
-			// transparente saldría como una bolsa maciza sin el contorno que se
-			// le reconoce. Sin badge, Android usa el suyo genérico.
-			icon: '/icono.png',
+			// Sin `icon` a propósito: esa opción es la imagen grande de la
+			// derecha, y repetía la misma bolsa que ya sale como icono de la
+			// app, a la izquierda. Ese icono pequeño no se declara aquí — lo
+			// saca Chrome del manifest.
+			//
+			// Tampoco se pone `badge` (el glifo de la barra de estado): Android
+			// lo pinta en monocromo a partir del alfa, y esta bolsa, que tiene
+			// relleno opaco, saldría maciza y sin el contorno que la hace
+			// reconocible.
 			// El tag hace que un aviso sustituya al anterior del mismo tipo en vez
 			// de apilarse: si el resumen del lunes sigue sin leerse el lunes
 			// siguiente, no quedan dos.
