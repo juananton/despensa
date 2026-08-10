@@ -35,17 +35,21 @@ create extension if not exists pg_net;
 -- Credencial del cron
 -- ---------------------------------------------------------------------------
 
--- La service_role key se salta las políticas RLS, así que no puede quedar en
--- claro dentro de la definición del trabajo (cron.job es legible desde el SQL
--- Editor). Vault la guarda cifrada y el trabajo la descifra al ejecutarse.
+-- Un secreto propio, que sólo conocen el cron y la función (donde está puesto
+-- como CRON_SECRET). No se usa aquí la service_role key: con ella, filtrar
+-- esta línea daría acceso completo a la base de datos, mientras que con esto
+-- lo peor que puede pasar es que alguien dispare los avisos de hoy.
+--
+-- Va en Vault y no en claro dentro del trabajo porque cron.job lo puede leer
+-- cualquiera que abra el SQL Editor.
 --
 -- El bloque permite volver a ejecutar el fichero entero: create_secret falla
 -- si el nombre ya existe.
 do $$
 begin
 	perform vault.create_secret(
-		'AQUÍ_LA_SERVICE_ROLE_KEY',
-		'service_role_key',
+		'AQUÍ_EL_CRON_SECRET',
+		'cron_secret',
 		'Para que el cron de avisos invoque la Edge Function notify'
 	);
 exception
@@ -74,10 +78,10 @@ select cron.schedule(
 		url := 'https://dhsxhmtvvuunnreanncx.supabase.co/functions/v1/notify',
 		headers := jsonb_build_object(
 			'Content-Type', 'application/json',
-			'Authorization', 'Bearer ' || (
+			'x-cron-secret', (
 				select decrypted_secret
 				from vault.decrypted_secrets
-				where name = 'service_role_key'
+				where name = 'cron_secret'
 			)
 		),
 		body := '{}'::jsonb

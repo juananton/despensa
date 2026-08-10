@@ -14,6 +14,14 @@ import { plan } from './notices.js';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// Secreto propio, compartido sólo con el cron (ver la migración 0003). No se
+// reutiliza aquí la service_role key por dos razones: la que la plataforma
+// inyecta en SUPABASE_SERVICE_ROLE_KEY no es la misma cadena que se puede
+// copiar del panel —así que la comparación no cuadraba nunca—, y sobre todo
+// porque si esto se filtrase daría acceso completo a la base de datos en vez
+// de a un simple "manda los avisos de hoy".
+const CRON_SECRET = Deno.env.get('CRON_SECRET');
 const VAPID_PUBLIC_KEY = Deno.env.get('VAPID_PUBLIC_KEY')!;
 const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY')!;
 const VAPID_SUBJECT = Deno.env.get('VAPID_SUBJECT')!;
@@ -28,10 +36,12 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 Deno.serve(async request => {
-	// La plataforma ya exige un JWT válido, pero el de cualquiera de los dos
-	// usuarios lo es: sin esta comprobación, cualquiera con la sesión abierta
-	// podría gastar los avisos del día desde la consola del navegador.
-	if (request.headers.get('Authorization') !== `Bearer ${SERVICE_ROLE_KEY}`) {
+	// La función se despliega sin verificación de JWT (ver config.toml), así
+	// que esta cabecera es lo único que la protege: sin el secreto, cualquiera
+	// que diera con la URL podría gastar los avisos del día. El primer término
+	// evita que un despliegue sin el secreto puesto deje la puerta abierta a
+	// quien tampoco mande la cabecera (undefined === undefined).
+	if (!CRON_SECRET || request.headers.get('x-cron-secret') !== CRON_SECRET) {
 		return new Response('No autorizado', { status: 401 });
 	}
 
