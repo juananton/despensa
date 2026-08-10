@@ -373,37 +373,6 @@ h6 {
 .item .controls Button {
   margin-left: 0.5rem;
 }
-.item .controls .dropdown {
-  position: absolute;
-  background-color: #ffffff;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
-  list-style: none;
-  z-index: 1;
-  right: 0;
-  margin: 0;
-  top: 3rem;
-  color: rgb(0, 154, 36);
-  min-width: 148px;
-}
-.item .controls .dropdown.upwards {
-  top: auto;
-  bottom: 3rem;
-}
-.item .controls .dropdown li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .item .controls .dropdown li:hover {
-    background-color: rgb(220, 236, 220);
-  }
-}
 
 .btn {
   border-radius: 0.5rem;
@@ -463,6 +432,47 @@ h6 {
   border-color: #efefef;
   color: #bebebe;
   pointer-events: none;
+}
+
+.dropdownGroup {
+  position: relative;
+}
+.dropdownGroup .dropdown {
+  position: absolute;
+  background-color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  z-index: 1;
+  right: 0;
+  margin: 0;
+  top: 3rem;
+  color: rgb(0, 154, 36);
+  min-width: 148px;
+  width: max-content;
+  max-width: 70vw;
+}
+.dropdownGroup .dropdown.upwards {
+  top: auto;
+  bottom: 3rem;
+}
+.dropdownGroup .dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.dropdownGroup .dropdown li.disabled {
+  color: #bebebe;
+  cursor: default;
+}
+@media (hover: hover) {
+  .dropdownGroup .dropdown li:not(.disabled):hover {
+    background-color: rgb(220, 236, 220);
+  }
 }
 
 .modal-overlay {

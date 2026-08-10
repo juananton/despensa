@@ -1,0 +1,55 @@
+// Menú desplegable compartido (ver Dropdown.jsx). El grupo es el ancla de la
+// posición absoluta del menú, así que el componente se puede meter en
+// cualquier sitio sin depender de que el contenedor de turno sea relative.
+.dropdownGroup {
+	position: relative;
+
+	.dropdown {
+		position: absolute;
+		background-color: $color-white;
+		padding: 0.5rem;
+		border-radius: $radius-sm;
+		box-shadow: $shadow-md;
+		list-style: none;
+		z-index: 1;
+		right: 0;
+		margin: 0;
+		top: 3rem;
+		color: $color-green;
+		min-width: 148px;
+
+		// Un absoluto hereda como ancho disponible el de su ancla, que aquí es un
+		// botón de 40px: sin esto, "Desactivar avisos" se parte en dos líneas y
+		// sólo el min-width de arriba evita que quede en columna. El max-width lo
+		// mantiene dentro de la pantalla si algún día hay una opción muy larga.
+		width: max-content;
+		max-width: 70vw;
+
+		// Cerca del borde inferior de la pantalla no hay sitio abajo, así que el
+		// menú se voltea sobre el botón (lo decide Dropdown.jsx midiendo el hueco).
+		&.upwards {
+			top: auto;
+			bottom: 3rem;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.75rem 1rem;
+			border-radius: $radius-sm;
+			cursor: pointer;
+
+			&.disabled {
+				color: $color-gray-2;
+				cursor: default;
+			}
+		}
+
+		@media (hover: hover) {
+			li:not(.disabled):hover {
+				background-color: $color-light-green;
+			}
+		}
+	}
+}
