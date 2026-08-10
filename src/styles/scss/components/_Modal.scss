@@ -6,6 +6,14 @@
 		width: 100vw;
 		padding: 1rem;
 
+		// Por encima del desplegable, que declara z-index: 1. Sin esto el modal
+		// se queda en `auto` y pierde contra él pese a pintarse después: hoy no
+		// se llega a ver porque la capa se come los clics y no hay forma de
+		// abrir un menú con el modal delante, pero es una dependencia entre dos
+		// componentes que no se hablan, y basta con que uno cambie para que
+		// aparezca.
+		z-index: 2;
+
 		background-color: rgba($color-black, 0.75);
 
 		display: flex;
