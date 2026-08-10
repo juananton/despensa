@@ -1,12 +1,19 @@
 <svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="500" height="500" fill="white"/>
-<!-- La bolsa ocupa el 80% del ancho: es el techo que deja el recorte circular
-     de Android, y lo marca la esquina inferior izquierda, que es el punto del
-     trazo más lejano del centro.
+<!-- El icono se declara maskable en el manifest, y de un icono adaptable
+     Android NO enseña todo el lienzo: reserva el borde para el recorte y las
+     animaciones del lanzador, y sólo garantiza el 80% central. La bolsa se
+     queda por tanto dentro de ese círculo de radio 200, y el punto que marca
+     el límite es la esquina inferior izquierda del trazo.
 
-     El translate de fuera la sube 2 unidades sobre el centro geométrico. El asa
+     Parece un paso atrás y es justo lo contrario: sin maskable, Android trata
+     el icono como heredado, lo encoge un tercio y lo mete en un círculo blanco
+     suyo, así que la bolsa acababa ocupando la mitad de lo que ocupa el resto
+     de apps. Declarado maskable y a esta escala, llena el 82% del círculo.
+
+     El translate de fuera la sube 8 unidades sobre el centro geométrico: el asa
      pesa menos que el cuerpo, así que centrada por sus límites se ve caída. -->
-<g transform="translate(250 248) scale(1.3514) translate(-250 -234)">
+<g transform="translate(250 242) scale(1.1) translate(-250 -234)">
 <path opacity="0.16" d="M114 183H386L371.805 339.077C371.037 347.525 367.14 355.38 360.877 361.101C354.615 366.823 346.44 369.997 337.958 370H162.042C153.56 369.997 145.385 366.823 139.123 361.101C132.86 355.38 128.963 347.525 128.195 339.077L114 183Z" fill="#009A24" fill-opacity="0.2"/>
 <path d="M114 183H386L371.805 339.077C371.037 347.525 367.14 355.38 360.877 361.101C354.615 366.823 346.44 369.997 337.958 370H162.042C153.56 369.997 145.385 366.823 139.123 361.101C132.86 355.38 128.963 347.525 128.195 339.077L114 183Z" fill="#009A24" fill-opacity="0.2" stroke="#009A24" stroke-width="24" stroke-linejoin="round"/>
 <path d="M182 217V166C182 147.965 189.164 130.669 201.917 117.917C214.669 105.164 231.965 98 250 98C268.035 98 285.331 105.164 298.083 117.917C310.836 130.669 318 147.965 318 166V217" stroke="#009A24" stroke-width="24" stroke-linecap="round"/>
