@@ -541,6 +541,19 @@ h6 {
   font-size: 0.875rem;
   color: rgb(240, 35, 35);
 }
+.create-form .rate {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.create-form .rate label {
+  flex: 1;
+  min-width: 0;
+}
+.create-form .rate .rate-separator {
+  padding-bottom: 0.625rem;
+  white-space: nowrap;
+}
 
 label .label {
   display: block;

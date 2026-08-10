@@ -10,4 +10,24 @@
 			color: $color-red;
 		}
 	}
+
+	// "N unidades cada M días". Alineado abajo y no al centro: el primer campo
+	// lleva etiqueta y el segundo no, así que sólo cuadran por su base.
+	.rate {
+		display: flex;
+		align-items: flex-end;
+		gap: 0.5rem;
+
+		// Los campos se reparten el sitio; el texto de en medio ocupa el suyo.
+		label {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.rate-separator {
+			// Alineado con el campo, no con la etiqueta de encima.
+			padding-bottom: 0.625rem;
+			white-space: nowrap;
+		}
+	}
 }

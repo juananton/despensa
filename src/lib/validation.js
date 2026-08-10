@@ -40,10 +40,18 @@ const validateWholeNumber = (value, { min, message }) => {
 	return VALID;
 };
 
-export const validateDaysPerUnit = value =>
+// El ritmo se pide como dos enteros, "N unidades cada M días", para que nadie
+// tenga que escribir 0,5 días por unidad al consumir dos yogures diarios.
+export const validateUnitsPerCycle = value =>
 	validateWholeNumber(value, {
 		min: 1,
-		message: 'Los días por unidad deben ser un número entero de 1 o más.'
+		message: 'Las unidades deben ser un número entero de 1 o más.'
+	});
+
+export const validateCycleDays = value =>
+	validateWholeNumber(value, {
+		min: 1,
+		message: 'Los días deben ser un número entero de 1 o más.'
 	});
 
 export const validateUnits = value =>

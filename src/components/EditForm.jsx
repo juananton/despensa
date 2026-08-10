@@ -1,8 +1,12 @@
 import { useContext, useState } from 'react';
 import { CATEGORIES } from '../lib/constants';
 import ItemsContext from '../lib/context/ItemsContext';
-import { rescaleToDaysPerUnit } from '../lib/items';
-import { validateDaysPerUnit, validateName } from '../lib/validation';
+import { rescaleToRate } from '../lib/items';
+import {
+	validateCycleDays,
+	validateName,
+	validateUnitsPerCycle
+} from '../lib/validation';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
@@ -12,9 +16,10 @@ const EditForm = ({ item, closeModal }) => {
 
 	const [nameValue, setNameValue] = useState(item.name);
 	// Texto, no números: ver la nota en lib/validation.js.
-	const [daysPerUnitValue, setDaysPerUnitValue] = useState(
-		String(item.daysPerUnit)
+	const [unitsPerCycleValue, setUnitsPerCycleValue] = useState(
+		String(item.unitsPerCycle)
 	);
+	const [cycleDaysValue, setCycleDaysValue] = useState(String(item.cycleDays));
 	const [categoryValue, setCategoryValue] = useState(item.category);
 	const [errors, setErrors] = useState({});
 
@@ -23,25 +28,33 @@ const EditForm = ({ item, closeModal }) => {
 
 		const validated = {
 			name: validateName(nameValue, { requireValue: true }),
-			daysPerUnit: validateDaysPerUnit(daysPerUnitValue)
+			unitsPerCycle: validateUnitsPerCycle(unitsPerCycleValue),
+			cycleDays: validateCycleDays(cycleDaysValue)
 		};
 
 		setErrors(validated);
 		if (Object.values(validated).some(field => field.error)) return;
 
-		const daysPerUnit = Number(daysPerUnitValue);
+		const rate = {
+			unitsPerCycle: Number(unitsPerCycleValue),
+			cycleDays: Number(cycleDaysValue)
+		};
 
 		const updatedItem = {
 			name: nameValue,
-			daysPerUnit,
+			...rate,
 			category: categoryValue,
 			id: item.id
 		};
 
-		// Cambiar la duración por unidad reescala el stock que quedaba, para no
+		// Cambiar el ritmo de consumo reescala el stock que quedaba, para no
 		// perder lo ya consumido.
-		if (daysPerUnit !== item.daysPerUnit) {
-			updatedItem.depletesAt = rescaleToDaysPerUnit(item, daysPerUnit);
+		const rateChanged =
+			rate.unitsPerCycle !== item.unitsPerCycle ||
+			rate.cycleDays !== item.cycleDays;
+
+		if (rateChanged) {
+			updatedItem.depletesAt = rescaleToRate(item, rate);
 		}
 
 		updateItem(updatedItem);
@@ -77,16 +90,29 @@ const EditForm = ({ item, closeModal }) => {
 					</option>
 				))}
 			</Select>
-			<Input
-				type='number'
-				label='Días por unidad'
-				value={daysPerUnitValue}
-				min={1}
-				inputMode='numeric'
-				onChange={e => setDaysPerUnitValue(e.target.value)}
-				message={errors.daysPerUnit?.message}
-				error={errors.daysPerUnit?.error}
-			/>
+			<div className='rate'>
+				<Input
+					type='number'
+					label='Consumo'
+					value={unitsPerCycleValue}
+					min={1}
+					inputMode='numeric'
+					onChange={e => setUnitsPerCycleValue(e.target.value)}
+					message={errors.unitsPerCycle?.message}
+					error={errors.unitsPerCycle?.error}
+				/>
+				<span className='rate-separator'>uds. cada</span>
+				<Input
+					type='number'
+					value={cycleDaysValue}
+					min={1}
+					inputMode='numeric'
+					onChange={e => setCycleDaysValue(e.target.value)}
+					message={errors.cycleDays?.message}
+					error={errors.cycleDays?.error}
+				/>
+				<span className='rate-separator'>días</span>
+			</div>
 			<div className='form-buttons'>
 				<Button type='button' onClick={closeModal}>
 					Cancelar
