@@ -2,9 +2,12 @@
 -- Pegar en el SQL Editor de Supabase y ejecutar, DESPUÉS de haber desplegado
 -- la función `notify` (supabase functions deploy notify).
 --
--- Antes de ejecutar hay que sustituir dos cosas, marcadas con AQUÍ:
---   1. el ref del proyecto en la URL de la función
---   2. la service_role key, que se guarda cifrada en Vault
+-- Antes de ejecutar hay que poner la service_role key donde dice AQUÍ.
+--
+-- IMPORTANTE: hazlo en el editor de Supabase, sobre el texto ya pegado, y NO
+-- guardes la clave en este fichero. Se salta todas las políticas RLS, y basta
+-- con un commit despistado para que acabe en el historial del repositorio,
+-- donde ya no se borra: habría que rotarla.
 
 -- ---------------------------------------------------------------------------
 -- Estado
@@ -68,7 +71,7 @@ select cron.schedule(
 	'0 7 * * *',
 	$$
 	select net.http_post(
-		url := 'https://AQUÍ_EL_REF_DEL_PROYECTO.supabase.co/functions/v1/notify',
+		url := 'https://dhsxhmtvvuunnreanncx.supabase.co/functions/v1/notify',
 		headers := jsonb_build_object(
 			'Content-Type', 'application/json',
 			'Authorization', 'Bearer ' || (
