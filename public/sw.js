@@ -37,10 +37,15 @@ self.addEventListener('push', event => {
 			// directo suelto, Chrome usaba el favicon que tenía cacheado para el
 			// origen y no había forma de moverlo desde la web.
 			//
-			// Tampoco se pone `badge` (el glifo de la barra de estado): Android
-			// lo pinta en monocromo a partir del alfa, y esta bolsa, que tiene
-			// relleno opaco, saldría maciza y sin el contorno que la hace
-			// reconocible.
+			// El glifo pequeño. Android descarta su color y pinta sólo el canal
+			// alfa, así que badge.png es la bolsa a base de contorno, sin el
+			// relleno translúcido del icono grande: con él, el alfa sería la
+			// silueta maciza y saldría un manchurrón.
+			//
+			// Sin esto Chrome pone una campana genérica, que es lo que se ve en
+			// las notificaciones de un Samsung con One UI. En un Pixel ese hueco
+			// se usa de otra forma y el mismo aviso se ve distinto en cada uno.
+			badge: '/badge.png',
 			// El tag hace que un aviso sustituya al anterior del mismo tipo en vez
 			// de apilarse: si el resumen del lunes sigue sin leerse el lunes
 			// siguiente, no quedan dos.
