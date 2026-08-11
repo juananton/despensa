@@ -101,7 +101,7 @@ const EditForm = ({ item, closeModal }) => {
 					message={errors.unitsPerCycle?.message}
 					error={errors.unitsPerCycle?.error}
 				/>
-				<span className='rate-separator'>uds. cada</span>
+				<span className='rate-separator'>cada</span>
 				<Input
 					type='number'
 					value={cycleDaysValue}
