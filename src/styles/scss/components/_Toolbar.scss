@@ -59,7 +59,12 @@
 
 		.input {
 			width: 100%;
-			height: auto;
+			// No "auto": sin relleno propio, el alto saldría sólo de la
+			// line-height del reset (1,15 → ~18px para 16px de fuente), una caja
+			// demasiado justa donde el cursor del navegador se pintaba cortado
+			// por arriba y por abajo. Mismo alto que el resto de campos de la
+			// app, que lo declaran fijo por la misma razón.
+			height: 2.5rem;
 			padding: 0;
 			border: none;
 			background: transparent;
