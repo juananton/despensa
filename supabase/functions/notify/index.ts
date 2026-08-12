@@ -137,9 +137,18 @@ const send = async (
 
 		for (const notice of notices) {
 			try {
+				// La urgencia es del propio protocolo Web Push (RFC 8030) y `high`
+				// es lo que hace que FCM despierte al dispositivo de Doze para
+				// entregar ya, en vez de esperar a la siguiente ventana de
+				// mantenimiento — justo lo que retrasaba Samsung con la pantalla
+				// bloqueada. Se pide siempre alta porque los tres avisos de esta
+				// función acaban en una notificación visible para la persona,
+				// nunca en trabajo silencioso de fondo, que es la condición bajo
+				// la que Google pide reservarla.
 				await webpush.sendNotification(
 					target,
-					JSON.stringify({ ...notice, url: '/' })
+					JSON.stringify({ ...notice, url: '/' }),
+					{ urgency: 'high' }
 				);
 				delivered++;
 			} catch (e) {
