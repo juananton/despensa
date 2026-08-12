@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import ItemsContext from '../lib/context/ItemsContext';
-import { daysLeft, unitsLeft } from '../lib/items';
+import { daysLeft } from '../lib/items';
 import Item from './Item';
 import Toolbar from './Toolbar';
 
@@ -58,7 +58,6 @@ const sortItems = (items, sortBy) => {
 
 	const byName = (a, b) => a.name.localeCompare(b.name, 'es');
 	const byDays = by(item => daysLeft(item));
-	const byUnits = by(item => unitsLeft(item));
 
 	switch (sortBy) {
 		case 1:
@@ -67,10 +66,6 @@ const sortItems = (items, sortBy) => {
 			return [...items].sort(byDays);
 		case 3:
 			return [...items].sort(desc(byDays));
-		case 4:
-			return [...items].sort(byUnits);
-		case 5:
-			return [...items].sort(desc(byUnits));
 		default:
 			return items;
 	}

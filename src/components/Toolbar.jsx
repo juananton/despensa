@@ -64,8 +64,6 @@ const Toolbar = ({
 					<option value='1'>Nombre</option>
 					<option value='2'>Menos días</option>
 					<option value='3'>Más días</option>
-					<option value='4'>Menos unidades</option>
-					<option value='5'>Más unidades</option>
 				</Select>
 			</div>
 			<Button variant='icon' use='nobg' onClick={openSearch}>
