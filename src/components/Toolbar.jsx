@@ -52,7 +52,7 @@ const Toolbar = ({
 					value={category}
 					onChange={e => onCategoryChange(e.target.value)}
 				>
-					<option value='all'>Todas</option>
+					<option value='all'>Todos</option>
 					{Object.values(CATEGORIES).map(cat => (
 						<option key={cat} value={cat}>
 							{cat}
