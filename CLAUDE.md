@@ -125,6 +125,12 @@ bloqueada.
 - **La Edge Function no viaja en el push**: se despliega aparte. Si se edita en
   el panel de Supabase, hay que pegar el fichero **entero** para que lo
   desplegado y el repo no diverjan.
+- **Los avisos push necesitan https**, así que no se pueden probar desde el
+  móvil contra el servidor de desarrollo por IP (`http://192.168.x.x:5173`):
+  ahí `navigator.serviceWorker` no existe, `pushSupported()` da falso y la
+  opción de activar avisos **desaparece del menú de ajustes** en vez de fallar.
+  Para probarlos hay que ir a la web desplegada. `localhost` sí es contexto
+  seguro, y por eso en el ordenador no se nota.
 - **El login de Supabase impide probar la app desde un navegador automatizado.**
   La receta que funciona: una página temporal en la raíz (`algo-preview.html` +
   `src/dev-preview.jsx`) que monte el componente con contextos falsos, y
