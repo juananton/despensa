@@ -6,9 +6,10 @@
 	// La explicación y las advertencias van pegadas a lo que explican, no
 	// separadas por el hueco de un campo más.
 	.note {
+		margin: 0;
+		line-height: 1.25;
 		font-size: $text-sm;
 		color: $color-gray-3;
-		margin-top: -0.75rem;
 	}
 
 	// El fallo de la operación, no el del campo: mismo tamaño que las notas de

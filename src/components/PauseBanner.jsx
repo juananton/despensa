@@ -30,9 +30,7 @@ const PauseBanner = () => {
 					{failed
 						? 'No se ha podido reanudar. Inténtalo otra vez.'
 						: `Desde el ${formatDay(pantry.pausedAt)}${
-								pantry.resumesOn
-									? `. Volvéis el ${formatDay(pantry.resumesOn)}`
-									: ''
+								pantry.resumesOn ? ` al ${formatDay(pantry.resumesOn)}` : ''
 						  }`}
 				</small>
 			</div>

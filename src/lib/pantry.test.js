@@ -53,20 +53,20 @@ describe('días sueltos', () => {
 describe('fechas para leer', () => {
 	const today = new Date(2026, 8, 1);
 
-	it('escribe el día y el mes', () => {
-		assert.equal(formatDay('2026-09-15', today), '15 de septiembre');
+	it('escribe el día y el mes en números, que es lo que cabe', () => {
+		assert.equal(formatDay('2026-09-15', today), '15/09');
 	});
 
 	// El año sólo cuando aporta: en una pausa de Navidad la vuelta cae en enero
-	// y "7 de enero" a secas se lee como si fuese el que ya pasó.
+	// y un "07/01" a secas se lee como si fuese el que ya pasó.
 	it('añade el año cuando no es el de hoy', () => {
-		assert.equal(formatDay('2027-01-07', today), '7 de enero de 2027');
+		assert.equal(formatDay('2027-01-07', today), '07/01/27');
 	});
 
 	it('entiende también un instante completo', () => {
 		assert.equal(
 			formatDay(new Date(2026, 8, 1, 17, 15).toISOString(), today),
-			'1 de septiembre'
+			'01/09'
 		);
 	});
 });

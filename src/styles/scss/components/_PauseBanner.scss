@@ -4,7 +4,7 @@
 	justify-content: space-between;
 	gap: 0.75rem;
 	padding: 0.75rem 1rem;
-	margin-bottom: 0.5rem;
+	margin-bottom: 1rem;
 	border-radius: $radius-md;
 
 	// Naranja de aviso y no rojo: la despensa parada no es un error, es un
@@ -14,14 +14,17 @@
 	.text {
 		display: flex;
 		flex-direction: column;
+		gap: 2px;
+		font-size: $text-sm;
+		color: $color-orange;
 
-		// A 360px el nombre del mes y la fecha de vuelta no caben en una línea,
-		// y partirlas es preferible a encoger el botón de salir de la pausa.
+		// Con las fechas en 01/09 las dos caben en una línea hasta en 360px, pero
+		// el min-width se queda: es lo que hace que un texto largo se parta en
+		// vez de empujar al botón de salir de la pausa fuera del banner.
 		min-width: 0;
 
 		small {
 			font-size: $text-sm;
-			color: $color-gray-3;
 
 			&.failure {
 				color: $color-red;
@@ -31,5 +34,8 @@
 
 	.btn {
 		flex-shrink: 0;
+		background-color: transparent;
+		border-color: $color-orange;
+		color: $color-orange;
 	}
 }

@@ -47,17 +47,29 @@ export const fromISODate = value => {
 // anclarlo a mano al calendario de casa.
 const DAY_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 
-// "15 de septiembre", o con año si cae fuera del actual, que es cuando aporta.
+/**
+ * "15/09", o "07/01/27" si cae fuera del año actual, que es cuando el año
+ * aporta: una pausa de Navidad vuelve en enero, y un "07/01" a secas se lee
+ * como el que ya pasó.
+ *
+ * En números y no "15 de septiembre" porque esto vive en el banner, donde
+ * compite por el ancho con el botón de reanudar: a 360px la fecha larga
+ * empujaba el texto a dos líneas.
+ */
 export const formatDay = (value, today = new Date()) => {
 	const date =
 		typeof value === 'string' && DAY_ONLY.test(value)
 			? fromISODate(value)
 			: new Date(value);
-	const sameYear = date.getFullYear() === today.getFullYear();
 
-	return date.toLocaleDateString('es-ES', {
-		day: 'numeric',
-		month: 'long',
-		...(sameYear ? {} : { year: 'numeric' })
-	});
+	// A mano y no con toLocaleDateString: pidiéndole `2-digit` para el día y el
+	// mes, en es-ES devuelve "15/9" igualmente —se queda con el patrón corto
+	// del idioma— y el cero delante es justo lo que mantiene todas las fechas
+	// del mismo ancho.
+	const day = String(date.getDate()).padStart(2, '0');
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+
+	if (date.getFullYear() === today.getFullYear()) return `${day}/${month}`;
+
+	return `${day}/${month}/${String(date.getFullYear()).slice(-2)}`;
 };

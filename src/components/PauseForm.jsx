@@ -42,24 +42,23 @@ const PauseForm = ({ closeModal }) => {
 
 	return (
 		<form className='pause-form' onSubmit={handleSubmit}>
-			<p>
-				Los días dejan de bajar y no se envían avisos hasta que la reanudes. Al
-				reanudarla, todo se desplaza por lo que haya durado la pausa.
+			<p className='note'>
+				Puedes reanudarla manualmente en cualquier momento o introducir una
+				fecha para que lo haga automáticamente.
 			</p>
 			<Input
 				type='date'
-				label='Volvéis el'
+				label='Fecha de reanudación'
 				value={dateValue}
 				min={today}
 				onChange={e => setDateValue(e.target.value)}
 				message={error.message}
 				error={error.error}
 			/>
-			<p className='note'>Si la pones, la despensa se reanuda sola ese día.</p>
 			{/* La pausa cuenta el consumo, no la caducidad: es la limitación del
 			    modelo, y decirla aquí es más barato que descubrirla abriendo la
 			    nevera al volver. */}
-			<p className='note'>El fresco caduca igual: revisadlo al llegar.</p>
+			<p className='note'>El fresco caduca igual: revísalo al llegar.</p>
 			{failed && (
 				<p className='note failure'>
 					No se ha podido pausar. Inténtalo otra vez.
