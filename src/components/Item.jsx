@@ -38,29 +38,29 @@ const Item = ({ item }) => {
 	// Access edit and delete item forms
 	const [modalContent, setModalContent] = useState({
 		formDisplay: undefined,
-		formTitle: ''
+		title: ''
 	});
 
 	const showDeleteModal = () => {
 		setModalContent({
 			formDisplay: <DeleteForm item={item} closeModal={closeModal} />,
-			formTitle: 'Eliminar'
+			title: 'Eliminar artículo'
 		});
 	};
 
 	const showEditModal = () => {
 		setModalContent({
 			formDisplay: <EditForm item={item} closeModal={closeModal} />,
-			formTitle: 'Editar'
+			title: 'Editar artículo'
 		});
 	};
 
 	const closeModal = () =>
-		setModalContent({ formDisplay: undefined, formTitle: '' });
+		setModalContent({ formDisplay: undefined, title: '' });
 
 	return (
 		<div className='item'>
-			<Modal formTitle={modalContent.formTitle} closeModal={closeModal}>
+			<Modal title={modalContent.title} closeModal={closeModal}>
 				{modalContent.formDisplay}
 			</Modal>
 			<div className='wrapper'>

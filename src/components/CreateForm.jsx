@@ -12,7 +12,7 @@ import Button from './Button';
 import Input from './Input';
 import Select from './Select';
 
-const CreateForm = ({ setShowModal }) => {
+const CreateForm = ({ closeModal }) => {
 	const { addItem } = useContext(ItemsContext);
 
 	const [nameValue, setNameValue] = useState('');
@@ -48,7 +48,7 @@ const CreateForm = ({ setShowModal }) => {
 			depletesAt: depletionFrom(Number(unitsValue), rate)
 		});
 
-		setShowModal(false);
+		closeModal();
 	};
 
 	const handleNameChange = e => {
@@ -114,7 +114,7 @@ const CreateForm = ({ setShowModal }) => {
 				error={errors.units?.error}
 			/>
 			<div className='form-buttons'>
-				<Button type='button' onClick={() => setShowModal(false)}>
+				<Button type='button' onClick={closeModal}>
 					Cancelar
 				</Button>
 				<Button type='submit' use='primary'>

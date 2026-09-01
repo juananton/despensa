@@ -1,0 +1,35 @@
+.pause-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem;
+	margin-bottom: 0.5rem;
+	border-radius: $radius-md;
+
+	// Naranja de aviso y no rojo: la despensa parada no es un error, es un
+	// estado que hay que recordar deshacer.
+	background-color: $color-light-orange;
+
+	.text {
+		display: flex;
+		flex-direction: column;
+
+		// A 360px el nombre del mes y la fecha de vuelta no caben en una línea,
+		// y partirlas es preferible a encoger el botón de salir de la pausa.
+		min-width: 0;
+
+		small {
+			font-size: $text-sm;
+			color: $color-gray-3;
+
+			&.failure {
+				color: $color-red;
+			}
+		}
+	}
+
+	.btn {
+		flex-shrink: 0;
+	}
+}

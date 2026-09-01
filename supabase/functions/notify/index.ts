@@ -10,6 +10,10 @@ import { plan } from './notices.js';
  * Los lunes manda el resumen de la semana EN LUGAR de los avisos sueltos, no
  * además: si no, un artículo que llega a cuatro días un lunes sonaría dos
  * veces seguidas. El resumen ya incluye todo lo que dirían los sueltos.
+ *
+ * Con la despensa en pausa (migración 0006) no se envía nada, y es también el
+ * único sitio que reanuda sola una despensa cuyo día de vuelta ya ha llegado
+ * sin que nadie haya abierto la app.
  */
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -43,6 +47,27 @@ Deno.serve(async request => {
 	// quien tampoco mande la cabecera (undefined === undefined).
 	if (!CRON_SECRET || request.headers.get('x-cron-secret') !== CRON_SECRET) {
 		return new Response('No autorizado', { status: 401 });
+	}
+
+	// El estado de la pausa se consulta ANTES de leer los artículos, y con
+	// resume_if_due() en vez de un select: si hoy es el día de la vuelta y
+	// nadie ha abierto la app, la despensa se reanuda aquí mismo y todas las
+	// fechas de agotamiento se desplazan. Leerlas antes daría los días
+	// congelados de la ausencia y se avisaría de lo que no toca.
+	const { data: pantry, error: pantryError } = await supabase.rpc(
+		'resume_if_due'
+	);
+
+	if (pantryError) {
+		return Response.json({ error: pantryError.message }, { status: 500 });
+	}
+
+	// Con la despensa parada no se manda nada ni se mueve ninguna bandera. No
+	// es sólo por no molestar durante el viaje: los días no avanzan, así que un
+	// aviso enviado hoy volvería a tocar mañana igual, y el resumen del lunes
+	// contaría una foto idéntica a la de la semana anterior.
+	if (pantry?.paused_at) {
+		return Response.json({ enviados: 0, avisos: 0, pausada: true });
 	}
 
 	const { data: items, error } = await supabase

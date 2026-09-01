@@ -1,4 +1,5 @@
 import { MAX_NAME_LENGTH } from './constants';
+import { fromISODate, toISODate } from './pantry';
 
 const VALID = { message: '', error: false };
 
@@ -59,3 +60,27 @@ export const validateUnits = value =>
 		min: 0,
 		message: 'Las unidades deben ser un número entero de 0 o más.'
 	});
+
+/**
+ * La fecha de vuelta de una pausa. Es opcional —se puede pausar sin saber
+ * cuándo volvéis— pero si se pone tiene que ser de hoy en adelante: una fecha
+ * pasada haría que la despensa se reanudase sola en el siguiente arranque, sin
+ * llegar a estar parada un solo día.
+ */
+export const validateReturnDate = (value, today = new Date()) => {
+	if (!value) return VALID;
+
+	const date = fromISODate(value);
+
+	if (Number.isNaN(date.getTime())) {
+		return { message: 'Esa fecha no vale.', error: true };
+	}
+
+	// Contra el día, no contra el instante: elegir hoy es válido aunque sean
+	// las seis de la tarde.
+	if (toISODate(date) < toISODate(today)) {
+		return { message: 'La vuelta no puede ser antes de hoy.', error: true };
+	}
+
+	return VALID;
+};

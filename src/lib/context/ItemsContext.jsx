@@ -1,11 +1,26 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState
+} from 'react';
 import { TICK_MS } from '../constants';
 import { fromRow, toRow } from '../items';
 import { supabase } from '../supabase';
+import PantryContext from './PantryContext';
+
+// Margen para agrupar la ráfaga de avisos de realtime que provoca reanudar la
+// despensa. Lo bastante corto para no notarse al pulsar `+`, lo bastante largo
+// para que veinte mensajes seguidos quepan dentro.
+const RELOAD_DELAY_MS = 100;
 
 const ItemsContext = createContext();
 
 export const ItemsProvider = ({ children }) => {
+	const { paused } = useContext(PantryContext);
+
 	const [listData, setListData] = useState({
 		data: [],
 		error: false,
@@ -15,7 +30,9 @@ export const ItemsProvider = ({ children }) => {
 	// Los días restantes los calcula cada componente leyendo la hora en el
 	// momento de pintar. Esto sólo fuerza un repintado periódico para que la
 	// cuenta atrás avance sola: guardar aquí la hora y pasarla hacia abajo
-	// significaba tener dos relojes desfasados haciendo la misma cuenta.
+	// significaba tener dos relojes desfasados haciendo la misma cuenta. Con
+	// una pausa viva el reloj no avanza (ver lib/clock.js) y el repintado no
+	// cambia nada, que es justo lo que se quiere.
 	const [, setTick] = useState(0);
 
 	useEffect(() => {
@@ -42,9 +59,20 @@ export const ItemsProvider = ({ children }) => {
 		setListData({ data: data.map(fromRow), loading: false, error: false });
 	}, []);
 
-	useEffect(() => {
-		fetchData();
+	// Realtime manda un mensaje por FILA cambiada, así que reanudar la despensa
+	// —que desplaza la tabla entera de una vez— dispararía tantas recargas como
+	// artículos haya. Agruparlas en una sola deja el caso normal igual (un `+`
+	// es un mensaje) y convierte esa ráfaga en una recarga.
+	const reloadTimer = useRef(null);
 
+	const scheduleReload = useCallback(() => {
+		clearTimeout(reloadTimer.current);
+		reloadTimer.current = setTimeout(fetchData, RELOAD_DELAY_MS);
+	}, [fetchData]);
+
+	// La carga inicial no está aquí: la hace el efecto de la pausa, que también
+	// corre al montar. Pedirla en los dos sitios traía la lista dos veces.
+	useEffect(() => {
 		// Cualquier cambio en la tabla recarga la lista, venga de este dispositivo
 		// o del otro. Con veinte artículos sale más barato que ir reconciliando
 		// cada evento por separado, y no hay forma de que las dos pantallas
@@ -54,14 +82,23 @@ export const ItemsProvider = ({ children }) => {
 			.on(
 				'postgres_changes',
 				{ event: '*', schema: 'public', table: 'items' },
-				fetchData
+				scheduleReload
 			)
 			.subscribe();
 
 		return () => {
+			clearTimeout(reloadTimer.current);
 			supabase.removeChannel(channel);
 		};
-	}, [fetchData]);
+	}, [scheduleReload]);
+
+	// Pausar y reanudar cambian lo que hay que enseñar sin que nadie toque la
+	// lista: al reanudar porque Postgres reescribe todas las fechas, y al
+	// pausar porque el reloj deja de avanzar. Se recarga sin esperar a que
+	// llegue el aviso de realtime, que es quien avisa al OTRO móvil.
+	useEffect(() => {
+		fetchData();
+	}, [paused, fetchData]);
 
 	const addItem = async newItem => {
 		const { error } = await supabase.from('items').insert(toRow(newItem));

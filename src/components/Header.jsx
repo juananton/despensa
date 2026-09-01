@@ -1,14 +1,31 @@
-import { useState } from 'react';
-import { FiBell, FiBellOff, FiLogOut, FiSettings } from 'react-icons/fi';
+import { useContext, useState } from 'react';
+import {
+	FiBell,
+	FiBellOff,
+	FiLogOut,
+	FiPause,
+	FiPlay,
+	FiSettings
+} from 'react-icons/fi';
+import PantryContext from '../lib/context/PantryContext';
 import { supabase } from '../lib/supabase';
 import { usePush } from '../lib/usePush';
 import Button from './Button';
 import CreateForm from './CreateForm';
 import Dropdown from './Dropdown';
 import Modal from './Modal';
+import PauseForm from './PauseForm';
 
 const DENIED_NOTE =
 	'Los has bloqueado en el navegador. Se vuelven a permitir desde los ajustes del sitio.';
+
+// Las dos ventanas que salen de la cabecera. Como objeto y no como un par de
+// banderas para que Modal reciba `undefined` cuando no hay ninguna abierta: es
+// lo que lo apaga.
+const FORMS = {
+	create: { title: 'Nuevo artículo', Form: CreateForm },
+	pause: { title: 'Pausar la despensa', Form: PauseForm }
+};
 
 /**
  * La opción de avisos vale para este dispositivo, no para la cuenta: por eso
@@ -45,16 +62,35 @@ const pushOption = push => {
 	];
 };
 
+/**
+ * Parar la despensa mientras estáis fuera vive aquí, en los ajustes, porque es
+ * cosa de dos veces al año y no se gana un sitio fijo en la cabecera. Pausar
+ * pregunta antes la fecha de vuelta; reanudar no pregunta nada, y además se
+ * puede hacer desde el aviso que sale sobre la lista (PauseBanner).
+ */
+const pauseOption = (pantry, showPause) => ({
+	icon: pantry.paused ? (
+		<FiPlay className='icon' />
+	) : (
+		<FiPause className='icon' />
+	),
+	label: pantry.paused ? 'Reanudar la despensa' : 'Pausar la despensa',
+	onClick: pantry.paused ? pantry.resume : showPause
+});
+
 const Header = () => {
-	const [showModal, setShowModal] = useState(false);
-	const closeModal = () => setShowModal(false);
+	const [openForm, setOpenForm] = useState(null);
+	const closeModal = () => setOpenForm(null);
 
 	const push = usePush();
+	const pantry = useContext(PantryContext);
+
+	const form = openForm ? FORMS[openForm] : null;
 
 	return (
 		<div className='header'>
-			<Modal formTitle='Nuevo' formId='create' closeModal={closeModal}>
-				{showModal && <CreateForm setShowModal={setShowModal} />}
+			<Modal title={form?.title} closeModal={closeModal}>
+				{form && <form.Form closeModal={closeModal} />}
 			</Modal>
 			<div className='logo'>
 				{/* Sin /public: Vite copia esa carpeta a la raíz al construir, así
@@ -64,7 +100,7 @@ const Header = () => {
 				<h1>Despensa</h1>
 			</div>
 			<div className='header-buttons'>
-				<Button use='primary' onClick={() => setShowModal(true)}>
+				<Button use='primary' onClick={() => setOpenForm('create')}>
 					Añadir
 				</Button>
 				<Dropdown
@@ -72,6 +108,7 @@ const Header = () => {
 					title='Ajustes'
 					options={[
 						...pushOption(push),
+						pauseOption(pantry, () => setOpenForm('pause')),
 						{
 							icon: <FiLogOut className='icon' />,
 							label: 'Salir',

@@ -1,12 +1,14 @@
 // Con extensión: Vite la resuelve igual sin ella, pero `node --test` no, y
 // este módulo se prueba desde Node (src/lib/items.test.js).
+import { now as clockNow } from './clock.js';
 import { MS_PER_DAY } from './constants.js';
 
 /**
  * Un artículo guarda una única fuente de verdad: `depletesAt`, la fecha en la
  * que se le acaba el stock. Los días restantes y las unidades se derivan de
  * ella, así que la cuenta atrás no necesita ningún temporizador que la lleve:
- * basta con mirar el reloj. Sobrevive a recargas y a tener la app cerrada.
+ * basta con mirar el reloj (el de clock.js, que se congela durante las
+ * pausas). Sobrevive a recargas y a tener la app cerrada.
  *
  * El ritmo de consumo se guarda como dos enteros —`unitsPerCycle` unidades
  * cada `cycleDays` días— y no como los días que dura una unidad. Es lo que
@@ -30,12 +32,16 @@ const msPerUnit = ({ unitsPerCycle, cycleDays }) =>
 const remainingMs = (item, now) => Math.max(0, depletionTime(item) - now);
 
 /**
- * Días de consumo que quedan. El instante se lee aquí, no se recibe de un
+ * Días de consumo que quedan. El instante se lee al llamar, no se recibe de un
  * estado que va por detrás: mezclar un reloj cacheado con fechas ancladas a la
  * hora real hace que el `ceil` de abajo redondee de más. Un artículo recién
  * creado con 6 días mostraba 7.
+ *
+ * Quien lo lee es clock.js y no `Date.now()` porque con la despensa en pausa
+ * el ahora es el momento en que se pausó; el parámetro sigue estando para
+ * poder fijarlo en las pruebas.
  */
-export const daysLeft = (item, now = Date.now()) =>
+export const daysLeft = (item, now = clockNow()) =>
 	Math.ceil(remainingMs(item, now) / MS_PER_DAY);
 
 /**
@@ -45,11 +51,11 @@ export const daysLeft = (item, now = Date.now()) =>
  * Con 5 yogures a media jornada cada uno quedan 2,5 días, que redondeados a 3
  * días daban 6 yogures.
  */
-export const unitsLeft = (item, now = Date.now()) =>
+export const unitsLeft = (item, now = clockNow()) =>
 	Math.ceil(remainingMs(item, now) / msPerUnit(item));
 
 // Fecha de agotamiento de un stock de `units` unidades empezando ahora.
-export const depletionFrom = (units, rate, from = Date.now()) =>
+export const depletionFrom = (units, rate, from = clockNow()) =>
 	new Date(from + units * msPerUnit(rate)).toISOString();
 
 /**
@@ -58,7 +64,7 @@ export const depletionFrom = (units, rate, from = Date.now()) =>
  * 10 días por bote, tienes 24 días, no 20. Editar una estimación no debería
  * borrar lo que ya llevabas consumido.
  */
-export const rescaleToRate = (item, rate, now = Date.now()) => {
+export const rescaleToRate = (item, rate, now = clockNow()) => {
 	const units = remainingMs(item, now) / msPerUnit(item);
 
 	return depletionFrom(units, rate, now);

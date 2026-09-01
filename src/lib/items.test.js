@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { freezeClock } from './clock.js';
 import { daysLeft, depletionFrom, rescaleToRate, unitsLeft } from './items.js';
 
 // Reloj fijo: todo se deriva de la fecha de agotamiento, así que sin un "ahora"
@@ -117,5 +118,56 @@ describe('cambio de ritmo', () => {
 
 		assert.equal(unitsLeft(reescalado, NOW), 4);
 		assert.equal(daysLeft(reescalado, NOW), 2);
+	});
+});
+
+describe('despensa en pausa', () => {
+	// El reloj es estado de módulo: si una prueba lo deja congelado, las que
+	// vengan detrás contarían desde una hora que no es.
+	const conElRelojEn = (instante, comprobar) => {
+		freezeClock(instante);
+
+		try {
+			comprobar();
+		} finally {
+			freezeClock(null);
+		}
+	};
+
+	it('cuenta los días desde el momento en que se pausó', () => {
+		const cafe = item(2, 1, 10);
+
+		// A los cinco días de ausencia el café sigue diciendo lo que decía ese
+		// día, no lo que diría hoy: quedan 15 y no 15 menos lo que llevemos
+		// fuera.
+		conElRelojEn(NOW + 5 * DIA, () => {
+			assert.equal(daysLeft(cafe), 15);
+			assert.equal(unitsLeft(cafe), 2);
+		});
+	});
+
+	it('crea artículos con el reloj parado, no con el de verdad', () => {
+		// Comprar algo estando fuera y meterlo en la app tiene que darle sus
+		// días enteros desde la vuelta: si se anclase al reloj real, el
+		// desplazamiento del reanudar le sumaría la ausencia por segunda vez.
+		conElRelojEn(NOW, () => {
+			const arroz = { unitsPerCycle: 1, cycleDays: 4 };
+
+			assert.equal(
+				depletionFrom(3, arroz),
+				new Date(NOW + 12 * DIA).toISOString()
+			);
+		});
+	});
+
+	it('vuelve al reloj de verdad al reanudar', () => {
+		const cafe = item(2, 1, 10);
+
+		conElRelojEn(NOW + 5 * DIA, () => {});
+
+		// Sin pausa el default es la hora real, así que ya no coincide con el
+		// reloj fijo de las pruebas: lo que importa es que no se haya quedado
+		// clavado en él.
+		assert.notEqual(daysLeft(cafe), 15);
 	});
 });
