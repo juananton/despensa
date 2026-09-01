@@ -639,6 +639,48 @@ label .errorText {
   color: rgb(240, 35, 35);
 }
 
+.date-field .label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.date-field .wrapper {
+  position: relative;
+}
+.date-field .input {
+  appearance: none;
+  background-color: #ffffff;
+  color: #1c1c1c;
+  cursor: pointer;
+  padding-right: 2.5rem;
+}
+.date-field .input.empty {
+  color: transparent;
+}
+.date-field .placeholder {
+  pointer-events: none;
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgb(128, 128, 128);
+}
+.date-field .input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.date-field .icon {
+  pointer-events: none;
+  position: absolute;
+  width: 1.25rem;
+  right: 12px;
+  top: 0.625rem;
+  color: rgb(0, 154, 36);
+}
+.date-field .message {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: rgb(240, 35, 35);
+}
+
 .select .label {
   display: block;
   margin-bottom: 0.5rem;

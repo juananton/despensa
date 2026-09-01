@@ -1,0 +1,59 @@
+.date-field {
+	.label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	.wrapper {
+		position: relative;
+	}
+
+	.input {
+		// appearance sola no basta: sin fondo y texto propios, Android le pinta su
+		// gris de sistema. Es el mismo caso que el <select> (ver _Select.scss).
+		appearance: none;
+		background-color: $color-white;
+		color: $color-black;
+		cursor: pointer;
+
+		// Sitio para el icono, como el select deja para su chevron.
+		padding-right: 2.5rem;
+	}
+
+	// Con el campo vacío, escritorio pinta su propio "dd/mm/aaaa" y se leería
+	// dos veces encima del nuestro. Se apaga el texto, no el campo: los dígitos
+	// tienen que volver en cuanto haya una fecha escrita.
+	.input.empty {
+		color: transparent;
+	}
+
+	.placeholder {
+		pointer-events: none;
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: $color-gray-3;
+	}
+
+	// El del sistema es negro y no se puede teñir, así que se esconde y se pinta
+	// el nuestro; abrir el calendario pasa a ser cosa de showPicker().
+	.input::-webkit-calendar-picker-indicator {
+		display: none;
+	}
+
+	.icon {
+		pointer-events: none;
+		position: absolute;
+		width: 1.25rem;
+		right: 12px;
+		top: 0.625rem;
+		color: $color-green;
+	}
+
+	.message {
+		margin-top: 0.5rem;
+		font-size: $text-sm;
+		color: $color-red;
+	}
+}

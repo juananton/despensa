@@ -3,7 +3,7 @@ import PantryContext from '../lib/context/PantryContext';
 import { toISODate } from '../lib/pantry';
 import { validateReturnDate } from '../lib/validation';
 import Button from './Button';
-import Input from './Input';
+import DateInput from './DateInput';
 
 /**
  * Pide la pausa de la despensa para una ausencia larga. La fecha de vuelta es
@@ -46,8 +46,7 @@ const PauseForm = ({ closeModal }) => {
 				Puedes reanudarla manualmente en cualquier momento o introducir una
 				fecha para que lo haga automáticamente.
 			</p>
-			<Input
-				type='date'
+			<DateInput
 				label='Fecha de reanudación'
 				value={dateValue}
 				min={today}
